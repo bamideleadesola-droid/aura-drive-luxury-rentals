@@ -295,7 +295,7 @@ button {
   }
 
   .hero__image {
-    object-position: center bottom;
+    object-position: 38% bottom;
   }
 }
 
@@ -311,6 +311,13 @@ button {
   .hero {
     padding-inline: 18px;
     padding-top: 48px;
+  }
+
+  .hero__image {
+    top: 0;
+    bottom: 0;
+    height: 100%;
+    object-position: 36% bottom;
   }
 
   .hero__wash {
