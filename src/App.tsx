@@ -8,7 +8,7 @@ function App() {
     <main className="site-shell">
       <header className="nav" aria-label="Main navigation">
         <a className="brand" href="/" aria-label="AURA DRIVE home">
-          AURA DRIVE
+          AuraDrive<sup>®</sup>
         </a>
 
         <nav className="nav__links" aria-label="Primary">
