@@ -1,6 +1,6 @@
 # AURA DRIVE Luxury Rentals
 
-A polished luxury-only car rental landing page inspired by premium automotive hero sections, built with React and Vite.
+A bright, minimal luxury-only car rental hero section inspired by premium automotive layouts, built with React and Vite.
 
 ## Local Development
 
