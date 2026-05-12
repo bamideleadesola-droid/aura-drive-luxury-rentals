@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowRight, Menu, X } from "lucide-react";
+import { ArrowRight, Gem, Menu, Phone, X } from "lucide-react";
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -12,14 +12,20 @@ function App() {
         </a>
 
         <nav className="nav__links" aria-label="Primary">
-          <a href="#reserve">Fleet</a>
-          <a href="#reserve">Experience</a>
+          <a href="#reserve">Cars</a>
+          <a href="#reserve">Rental Terms</a>
+          <a href="#reserve">Concierge</a>
           <a href="mailto:hello@auradrive.example">Contact</a>
         </nav>
 
-        <a className="nav__cta" href="#reserve">
-          Reserve now
-        </a>
+        <div className="nav__actions">
+          <a className="nav__icon" href="mailto:hello@auradrive.example" aria-label="Contact AURA DRIVE">
+            <Phone aria-hidden="true" size={20} />
+          </a>
+          <a className="nav__cta" href="#reserve">
+            Book now
+          </a>
+        </div>
 
         <button
           className="nav__menu"
@@ -33,10 +39,13 @@ function App() {
 
         <nav className={`nav__mobile ${menuOpen ? "nav__mobile--open" : ""}`} aria-label="Mobile">
           <a href="#reserve" onClick={() => setMenuOpen(false)}>
-            Fleet
+            Cars
           </a>
           <a href="#reserve" onClick={() => setMenuOpen(false)}>
-            Experience
+            Rental Terms
+          </a>
+          <a href="#reserve" onClick={() => setMenuOpen(false)}>
+            Concierge
           </a>
           <a href="mailto:hello@auradrive.example" onClick={() => setMenuOpen(false)}>
             Contact
@@ -53,16 +62,17 @@ function App() {
         <div className="hero__wash" />
 
         <div className="hero__content">
-          <h1>Luxury cars for bright arrivals</h1>
-          <p>Premium rentals, delivered simply.</p>
+          <div className="hero__proof">
+            <Gem aria-hidden="true" size={18} />
+            Chosen by more than 250 clients
+          </div>
+
+          <h1>Premium car rental for every arrival</h1>
+          <p>Curated luxury cars, delivered with concierge care.</p>
 
           <div className="hero__actions" aria-label="Hero actions">
             <a className="button button--primary" id="reserve" href="mailto:hello@auradrive.example">
-              Reserve now
-              <ArrowRight aria-hidden="true" size={18} />
-            </a>
-            <a className="button button--secondary" href="mailto:hello@auradrive.example">
-              View fleet
+              Choose your car
               <ArrowRight aria-hidden="true" size={18} />
             </a>
           </div>
