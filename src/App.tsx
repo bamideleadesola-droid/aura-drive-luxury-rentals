@@ -8,7 +8,7 @@ function App() {
     <main className="site-shell">
       <header className="nav" aria-label="Main navigation">
         <a className="brand" href="/" aria-label="AURA DRIVE home">
-          AuraDrive<sup>®</sup>
+          <span>Aura</span>Drive<sup>®</sup>
         </a>
 
         <nav className="nav__links" aria-label="Primary">
@@ -63,6 +63,7 @@ function App() {
             </a>
             <a className="button button--secondary" href="mailto:hello@auradrive.example">
               View fleet
+              <ArrowRight aria-hidden="true" size={18} />
             </a>
           </div>
         </div>
