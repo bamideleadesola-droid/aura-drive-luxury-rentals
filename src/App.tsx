@@ -1,5 +1,14 @@
-import { type CSSProperties, type PointerEvent, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { type PointerEvent, useRef, useState } from "react";
+import {
+  AnimatePresence,
+  motion,
+  type MotionStyle,
+  type MotionValue,
+  useMotionValueEvent,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 import { ArrowRight, BriefcaseBusiness, Gem, Images, Menu, Phone, Plane, Sparkles, Waves, X } from "lucide-react";
 
 const arrivalTypes = [
@@ -98,42 +107,34 @@ const fleetShowcases = [
 type FleetShowcase = (typeof fleetShowcases)[number];
 
 type FleetShowcaseCardProps = {
+  active: boolean;
   index: number;
+  progress: MotionValue<number>;
   vehicle: FleetShowcase;
 };
 
-function FleetShowcaseCard({ index, vehicle }: FleetShowcaseCardProps) {
-  const cardRef = useRef<HTMLElement>(null);
+function FleetShowcaseCard({ active, index, progress, vehicle }: FleetShowcaseCardProps) {
   const shouldReduceMotion = useReducedMotion();
-  const { scrollYProgress } = useScroll({
-    target: cardRef,
-    offset: ["start 86%", "end 18%"],
-  });
-  const cardY = useTransform(scrollYProgress, [0, 0.25, 0.72, 1], [96, 0, -12, -34]);
-  const cardScale = useTransform(scrollYProgress, [0, 0.28, 0.72, 1], [0.955, 1, 0.982, 0.95]);
-  const cardOpacity = useTransform(scrollYProgress, [0, 0.18, 0.82, 1], [0.78, 1, 1, 0.9]);
-  const reveal = {
-    hidden: { opacity: 0, y: 30, scale: 0.98 },
-    visible: { opacity: 1, y: 0, scale: 1 },
-  };
+  const total = fleetShowcases.length;
+  const segment = 1 / total;
+  const enterStart = index === 0 ? 0 : Math.max(0, index * segment - 0.02);
+  const enterEnd = index === 0 ? 0.04 : Math.min(1, index * segment + 0.02);
+  const inputRange = [enterStart, enterEnd];
+  const cardY = useTransform(progress, inputRange, index === 0 ? [0, 0] : [620, 0]);
+  const cardScale = useTransform(progress, inputRange, index === 0 ? [1, 1] : [0.965, 1]);
+  const cardOpacity = useTransform(progress, [enterStart, Math.min(1, enterStart + 0.006)], index === 0 ? [1, 1] : [0, 1]);
   const motionStyle = {
     "--card-offset": `${index * 16}px`,
     zIndex: 10 + index,
-    ...(shouldReduceMotion ? {} : { opacity: cardOpacity, scale: cardScale, y: cardY }),
-  } as CSSProperties;
+    pointerEvents: active ? "auto" : "none",
+    ...(shouldReduceMotion ? { opacity: active ? 1 : 0 } : { opacity: cardOpacity, scale: cardScale, y: cardY }),
+  } as MotionStyle & { "--card-offset": string };
 
   return (
     <motion.article
-      className="fleet-showcase"
-      key={vehicle.name}
+      className={`fleet-showcase ${active ? "fleet-showcase--active" : ""}`}
       aria-labelledby={`${vehicle.id}-heading`}
-      ref={cardRef}
-      initial={shouldReduceMotion ? false : "hidden"}
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.16 }}
-      variants={reveal}
       style={motionStyle}
-      transition={{ duration: 0.68, ease: [0.22, 1, 0.36, 1] }}
     >
       <div className="fleet-showcase__top">
         <span className="fleet-showcase__kicker">{vehicle.name} gallery</span>
@@ -200,6 +201,36 @@ function FleetShowcaseCard({ index, vehicle }: FleetShowcaseCardProps) {
         </motion.a>
       </div>
     </motion.article>
+  );
+}
+
+function FleetShowcaseStack() {
+  const stackRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const { scrollYProgress } = useScroll({
+    target: stackRef,
+    offset: ["start 12%", "end 90%"],
+  });
+
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    const nextIndex = Math.min(fleetShowcases.length - 1, Math.max(0, Math.floor(latest * fleetShowcases.length + 0.08)));
+    setActiveIndex((currentIndex) => (currentIndex === nextIndex ? currentIndex : nextIndex));
+  });
+
+  return (
+    <div className="fleet-stack" ref={stackRef}>
+      <div className="fleet-stage">
+        {fleetShowcases.map((vehicle, index) => (
+          <FleetShowcaseCard
+            active={activeIndex === index}
+            index={index}
+            key={vehicle.name}
+            progress={scrollYProgress}
+            vehicle={vehicle}
+          />
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -466,14 +497,10 @@ function App() {
         </div>
       </motion.section>
 
-      <motion.section
+      <section
         className="fleet"
         id="fleet"
         aria-labelledby="fleet-heading"
-        initial={shouldReduceMotion ? false : { opacity: 0, y: 28 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.14 }}
-        transition={{ duration: 0.72, ease }}
       >
         <div className="fleet__inner">
           <div className="fleet__intro">
@@ -504,13 +531,9 @@ function App() {
             </motion.p>
           </div>
 
-          <div className="fleet-stack">
-            {fleetShowcases.map((vehicle, index) => (
-              <FleetShowcaseCard index={index} key={vehicle.name} vehicle={vehicle} />
-            ))}
-          </div>
+          <FleetShowcaseStack />
         </div>
-      </motion.section>
+      </section>
     </main>
   );
 }

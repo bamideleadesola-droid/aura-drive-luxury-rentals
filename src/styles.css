@@ -38,7 +38,7 @@ button {
 
 .site-shell {
   min-height: 100svh;
-  overflow: hidden;
+  overflow-x: clip;
   background: #ffffff;
 }
 
@@ -681,21 +681,23 @@ button {
 }
 
 .fleet-stack {
-  display: grid;
-  align-items: start;
-  gap: 0;
-  padding-bottom: clamp(180px, 22vw, 320px);
+  position: relative;
+  height: clamp(2100px, 315svh, 2600px);
+  padding-bottom: clamp(64px, 9vw, 120px);
 }
 
-.fleet-showcase + .fleet-showcase {
-  margin-top: clamp(-380px, -28vw, -240px);
+.fleet-stage {
+  position: sticky;
+  top: 92px;
+  height: min(760px, calc(100svh - 112px));
+  min-height: 570px;
 }
 
 .fleet-showcase {
-  position: sticky;
-  top: calc(92px + var(--card-offset, 0px));
+  position: absolute;
+  inset: 0;
   overflow: hidden;
-  padding: clamp(22px, 3vw, 34px);
+  padding: clamp(20px, 2.6vw, 30px);
   border: 1px solid rgba(23, 23, 23, 0.08);
   border-radius: 26px;
   background: #ffffff;
@@ -733,7 +735,8 @@ button {
 }
 
 .fleet-showcase__gallery {
-  margin-top: clamp(20px, 2.4vw, 30px);
+  height: clamp(220px, 30vh, 370px);
+  margin-top: clamp(16px, 2vw, 26px);
   display: grid;
   grid-template-columns: minmax(0, 1.04fr) minmax(360px, 1fr);
   gap: 10px;
@@ -752,23 +755,27 @@ button {
 }
 
 .fleet-showcase__main {
-  aspect-ratio: 1.45 / 1;
+  height: 100%;
 }
 
 .fleet-showcase__thumbs {
   min-width: 0;
+  height: 100%;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
 
 .fleet-showcase__thumb {
   min-height: 0;
-  aspect-ratio: 1.45 / 1;
+  height: auto;
 }
 
 .fleet-showcase__main img,
 .fleet-showcase__thumb img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   display: block;
@@ -835,10 +842,10 @@ button {
 }
 
 .fleet-showcase__details {
-  padding-top: clamp(28px, 4.2vw, 54px);
+  padding-top: clamp(22px, 2.9vw, 38px);
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(280px, 380px);
-  gap: clamp(28px, 5vw, 80px);
+  gap: clamp(24px, 4vw, 66px);
   align-items: end;
 }
 
@@ -859,7 +866,7 @@ button {
 .fleet-showcase h3 {
   margin: 0;
   color: #080808;
-  font-size: clamp(38px, 4.4vw, 62px);
+  font-size: clamp(36px, 4vw, 56px);
   line-height: 0.98;
   font-weight: 520;
   letter-spacing: 0;
@@ -867,7 +874,7 @@ button {
 
 .fleet-showcase__copy p {
   max-width: 600px;
-  margin: 22px 0 0;
+  margin: 16px 0 0;
   color: rgba(23, 23, 23, 0.68);
   font-size: clamp(16px, 1.28vw, 19px);
   line-height: 1.72;
@@ -1023,25 +1030,51 @@ button {
     filter: none;
   }
 
-  .fleet-showcase {
+  .fleet-stack {
+    height: auto;
+    padding-bottom: 0;
+  }
+
+  .fleet-stage {
     position: relative;
     top: auto;
+    height: auto;
+    min-height: 0;
+    display: grid;
+    gap: 28px;
+  }
+
+  .fleet-showcase {
+    position: relative;
+    inset: auto;
+    top: auto;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: none !important;
   }
 
   .fleet-showcase + .fleet-showcase {
-    margin-top: 28px;
+    margin-top: 0;
   }
 
   .fleet-showcase__gallery {
+    height: auto;
     grid-template-columns: 1fr;
   }
 
   .fleet-showcase__main {
+    height: auto;
     aspect-ratio: 1.38 / 1;
   }
 
   .fleet-showcase__thumbs {
+    height: auto;
     grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: none;
+  }
+
+  .fleet-showcase__thumb {
+    height: auto;
   }
 
   .fleet-showcase__details {
