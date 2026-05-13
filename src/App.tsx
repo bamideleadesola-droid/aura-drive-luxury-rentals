@@ -41,9 +41,61 @@ const arrivalTypes = [
   },
 ];
 
+const fleetCars = [
+  {
+    name: "Mercedes S-Class",
+    category: "Executive sedan",
+    price: "from $820/day",
+    image: "/assets/fleet-s-class.jpg",
+    alt: "Black Mercedes S-Class in a bright studio",
+    specs: ["4 seats", "Chauffeur-ready", "Quiet cabin"],
+  },
+  {
+    name: "Range Rover Autobiography",
+    category: "Luxury SUV",
+    price: "from $940/day",
+    image: "/assets/fleet-range-rover.jpg",
+    alt: "Black Range Rover parked by palm trees and modern architecture",
+    specs: ["5 seats", "Large luggage", "All terrain"],
+  },
+  {
+    name: "Porsche 911 GT3 RS",
+    category: "Performance coupe",
+    price: "from $1,180/day",
+    image: "/assets/fleet-porsche.jpg",
+    alt: "Close detail of a red Porsche 911 GT3 RS wheel and bodywork",
+    specs: ["2 seats", "Track-bred", "Sharp handling"],
+  },
+  {
+    name: "Lamborghini Huracan",
+    category: "Supercar",
+    price: "from $1,520/day",
+    image: "/assets/fleet-lamborghini.jpg",
+    alt: "Blue Lamborghini Huracan driving at sunset",
+    specs: ["2 seats", "V10", "3.2 sec"],
+  },
+  {
+    name: "Rolls-Royce Ghost",
+    category: "Chauffeur luxury",
+    price: "from $1,640/day",
+    image: "/assets/fleet-rolls-royce.jpg",
+    alt: "Black Rolls-Royce Ghost in a refined city street",
+    specs: ["4 seats", "Privacy cabin", "Soft ride"],
+  },
+  {
+    name: "Ferrari Spider",
+    category: "Convertible",
+    price: "from $1,390/day",
+    image: "/assets/fleet-ferrari.jpg",
+    alt: "Red Ferrari driving through a city at night",
+    specs: ["2 seats", "Open top", "Weekend ready"],
+  },
+];
+
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeArrival, setActiveArrival] = useState<number | null>(null);
+  const [activeFleet, setActiveFleet] = useState<number | null>(null);
   const shouldReduceMotion = useReducedMotion();
 
   const ease = [0.22, 1, 0.36, 1] as const;
@@ -58,7 +110,7 @@ function App() {
         animate: { scale: 1.16, opacity: 1 },
         transition: { duration: 1.4, ease },
       };
-  const handleArrivalPointerMove = (event: PointerEvent<HTMLAnchorElement>) => {
+  const handleCardPointerMove = (event: PointerEvent<HTMLAnchorElement>) => {
     if (shouldReduceMotion) {
       return;
     }
@@ -72,7 +124,7 @@ function App() {
     event.currentTarget.style.setProperty("--parallax-x", `${(50 - x) * 0.18}px`);
     event.currentTarget.style.setProperty("--parallax-y", `${(50 - y) * 0.14}px`);
   };
-  const resetArrivalPointer = (event: PointerEvent<HTMLAnchorElement>) => {
+  const resetCardPointer = (event: PointerEvent<HTMLAnchorElement>) => {
     event.currentTarget.style.setProperty("--pointer-x", "50%");
     event.currentTarget.style.setProperty("--pointer-y", "50%");
     event.currentTarget.style.setProperty("--parallax-x", "0px");
@@ -93,13 +145,13 @@ function App() {
         </motion.a>
 
         <nav className="nav__links" aria-label="Primary">
-          <motion.a href="#arrivals" whileHover={{ y: -1 }}>
+          <motion.a href="#fleet" whileHover={{ y: -1 }}>
             Cars
           </motion.a>
-          <motion.a href="#reserve" whileHover={{ y: -1 }}>
+          <motion.a href="mailto:hello@auradrive.example?subject=AURA%20DRIVE%20-%20Rental%20terms" whileHover={{ y: -1 }}>
             Terms
           </motion.a>
-          <motion.a href="#reserve" whileHover={{ y: -1 }}>
+          <motion.a href="#arrivals" whileHover={{ y: -1 }}>
             Concierge
           </motion.a>
           <motion.a href="mailto:hello@auradrive.example" whileHover={{ y: -1 }}>
@@ -119,7 +171,7 @@ function App() {
           </motion.a>
           <motion.a
             className="nav__cta"
-            href="#reserve"
+            href="mailto:hello@auradrive.example?subject=AURA%20DRIVE%20-%20Reserve"
             whileHover={shouldReduceMotion ? undefined : { y: -2, scale: 1.015 }}
             whileTap={shouldReduceMotion ? undefined : { scale: 0.98 }}
           >
@@ -148,13 +200,13 @@ function App() {
               exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -8, scale: 0.98 }}
               transition={{ duration: 0.18, ease }}
             >
-              <a href="#arrivals" onClick={() => setMenuOpen(false)}>
+              <a href="#fleet" onClick={() => setMenuOpen(false)}>
                 Cars
               </a>
-              <a href="#reserve" onClick={() => setMenuOpen(false)}>
+              <a href="mailto:hello@auradrive.example?subject=AURA%20DRIVE%20-%20Rental%20terms" onClick={() => setMenuOpen(false)}>
                 Terms
               </a>
-              <a href="#reserve" onClick={() => setMenuOpen(false)}>
+              <a href="#arrivals" onClick={() => setMenuOpen(false)}>
                 Concierge
               </a>
               <a href="mailto:hello@auradrive.example" onClick={() => setMenuOpen(false)}>
@@ -201,8 +253,7 @@ function App() {
           <motion.div className="hero__actions" aria-label="Hero actions" variants={reveal} transition={{ duration: 0.6, ease }}>
             <motion.a
               className="button button--primary"
-              id="reserve"
-              href="mailto:hello@auradrive.example"
+              href="#fleet"
               whileHover={shouldReduceMotion ? undefined : { y: -3, scale: 1.015 }}
               whileTap={shouldReduceMotion ? undefined : { scale: 0.98 }}
             >
@@ -268,9 +319,9 @@ function App() {
                   onPointerEnter={() => setActiveArrival(index)}
                   onPointerLeave={(event) => {
                     setActiveArrival(null);
-                    resetArrivalPointer(event);
+                    resetCardPointer(event);
                   }}
-                  onPointerMove={handleArrivalPointerMove}
+                  onPointerMove={handleCardPointerMove}
                   whileHover={shouldReduceMotion ? undefined : { y: -16, scale: 1.012 }}
                   whileFocus={shouldReduceMotion ? undefined : { y: -10, scale: 1.008 }}
                   whileTap={shouldReduceMotion ? undefined : { y: -6, scale: 0.992 }}
@@ -301,6 +352,94 @@ function App() {
                 </motion.a>
               );
             })}
+          </motion.div>
+        </div>
+      </motion.section>
+
+      <motion.section
+        className="fleet"
+        id="fleet"
+        aria-labelledby="fleet-heading"
+        initial={shouldReduceMotion ? false : { opacity: 0, y: 28 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.14 }}
+        transition={{ duration: 0.72, ease }}
+      >
+        <div className="fleet__inner">
+          <div className="fleet__header">
+            <motion.h2
+              id="fleet-heading"
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.6 }}
+              transition={{ duration: 0.64, ease }}
+            >
+              Select from the fleet.
+            </motion.h2>
+            <motion.p
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.6 }}
+              transition={{ duration: 0.64, delay: 0.08, ease }}
+            >
+              A tighter edit of executive sedans, SUVs, convertibles, and supercars ready for concierge delivery.
+            </motion.p>
+          </div>
+
+          <motion.div
+            className="fleet__grid"
+            aria-label="Available luxury cars"
+            initial={shouldReduceMotion ? false : "hidden"}
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.12 }}
+            transition={{ staggerChildren: 0.06 }}
+          >
+            {fleetCars.map((car, index) => (
+              <motion.a
+                className={`fleet-card ${activeFleet === index ? "fleet-card--active" : ""} ${
+                  activeFleet !== null && activeFleet !== index ? "fleet-card--inactive" : ""
+                }`}
+                href={`mailto:hello@auradrive.example?subject=${encodeURIComponent(`AURA DRIVE - Reserve ${car.name}`)}`}
+                key={car.name}
+                aria-label={`Reserve ${car.name}`}
+                variants={reveal}
+                onFocus={() => setActiveFleet(index)}
+                onBlur={() => setActiveFleet(null)}
+                onPointerEnter={() => setActiveFleet(index)}
+                onPointerLeave={(event) => {
+                  setActiveFleet(null);
+                  resetCardPointer(event);
+                }}
+                onPointerMove={handleCardPointerMove}
+                whileHover={shouldReduceMotion ? undefined : { y: -12, scale: 1.01 }}
+                whileFocus={shouldReduceMotion ? undefined : { y: -8, scale: 1.006 }}
+                whileTap={shouldReduceMotion ? undefined : { scale: 0.992 }}
+                transition={{ duration: 0.34, ease }}
+              >
+                <span className="fleet-card__media">
+                  <img className="fleet-card__image" src={car.image} alt={car.alt} />
+                  <span className="fleet-card__shine" />
+                  <span className="fleet-card__category">{car.category}</span>
+                  <span className="fleet-card__price">{car.price}</span>
+                </span>
+
+                <span className="fleet-card__body">
+                  <span className="fleet-card__title-row">
+                    <span className="fleet-card__name">{car.name}</span>
+                    <span className="fleet-card__count">{String(index + 1).padStart(2, "0")}</span>
+                  </span>
+                  <span className="fleet-card__specs">
+                    {car.specs.map((spec) => (
+                      <span key={spec}>{spec}</span>
+                    ))}
+                  </span>
+                  <span className="fleet-card__footer">
+                    Reserve this car
+                    <ArrowRight aria-hidden="true" size={17} />
+                  </span>
+                </span>
+              </motion.a>
+            ))}
           </motion.div>
         </div>
       </motion.section>
