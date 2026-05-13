@@ -5,43 +5,45 @@ import { ArrowRight, BriefcaseBusiness, Gem, Menu, Phone, Plane, Sparkles, Waves
 const arrivalTypes = [
   {
     title: "Airport arrival",
-    description: "Quiet handover, luggage space, and a composed first mile.",
-    match: "Executive sedan or long-wheelbase SUV",
-    tone: "Composed",
+    description: "Tarmac timing, luggage space, and a calm first mile.",
+    match: "Sedan / SUV",
+    tone: "Arrival",
     icon: Plane,
-    imageClass: "arrival-image--airport",
+    image: "/assets/arrival-airport.jpg",
+    alt: "Black luxury sedan parked beside a private aircraft on a runway",
   },
   {
     title: "Business day",
-    description: "Discreet cars prepared for meetings, transfers, and long waits.",
-    match: "S-Class, 7 Series, or Range Rover",
-    tone: "Discreet",
+    description: "Quiet presence for meetings, transfers, and waiting time.",
+    match: "Chauffeur-ready",
+    tone: "Executive",
     icon: BriefcaseBusiness,
-    imageClass: "arrival-image--business",
+    image: "/assets/arrival-business.jpg",
+    alt: "Well-dressed client stepping into a black luxury sedan outside a modern business building",
   },
   {
     title: "Weekend coast",
     description: "Open routes, grand tourers, and SUVs with room to breathe.",
-    match: "Convertible, GT coupe, or premium SUV",
-    tone: "Open",
+    match: "GT / convertible",
+    tone: "Open route",
     icon: Waves,
-    imageClass: "arrival-image--coast",
+    image: "/assets/arrival-coast.jpg",
+    alt: "Black Ferrari convertible on a coastal hillside road at golden hour",
   },
   {
     title: "Evening entrance",
     description: "Sharper arrivals for private dinners, events, and late plans.",
-    match: "Supercar, coupe, or chauffeur-ready sedan",
-    tone: "Sharp",
+    match: "Supercar / coupe",
+    tone: "After dark",
     icon: Sparkles,
-    imageClass: "arrival-image--evening",
+    image: "/assets/arrival-evening.jpg",
+    alt: "Red supercar parked outside a refined hotel entrance",
   },
 ];
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [selectedArrival, setSelectedArrival] = useState(0);
   const shouldReduceMotion = useReducedMotion();
-  const activeArrival = arrivalTypes[selectedArrival];
 
   const ease = [0.22, 1, 0.36, 1] as const;
   const reveal = {
@@ -208,7 +210,7 @@ function App() {
               viewport={{ once: true, amount: 0.6 }}
               transition={{ duration: 0.64, ease }}
             >
-              Choose the arrival. We'll match the car.
+              Arrivals, matched to the moment.
             </motion.h2>
             <motion.p
               initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
@@ -216,72 +218,58 @@ function App() {
               viewport={{ once: true, amount: 0.6 }}
               transition={{ duration: 0.64, delay: 0.08, ease }}
             >
-              A concierge-led fleet, shaped around the moment you need to arrive for.
+              Tell us where the day begins. We prepare the car, timing, and handover around it.
             </motion.p>
           </div>
 
-          <div className="arrival__index">
-            <div className="arrival__list" aria-label="Arrival options">
-              {arrivalTypes.map((arrival, index) => {
-                const ArrivalIcon = arrival.icon;
-                const isSelected = selectedArrival === index;
+          <motion.div
+            className="arrival__grid"
+            aria-label="Arrival options"
+            initial={shouldReduceMotion ? false : "hidden"}
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.18 }}
+            transition={{ staggerChildren: 0.08 }}
+          >
+            {arrivalTypes.map((arrival, index) => {
+              const ArrivalIcon = arrival.icon;
 
-                return (
-                  <motion.button
-                    className={`arrival-row ${isSelected ? "arrival-row--active" : ""}`}
-                    type="button"
-                    key={arrival.title}
-                    onClick={() => setSelectedArrival(index)}
-                    onMouseEnter={() => setSelectedArrival(index)}
-                    aria-pressed={isSelected}
-                    whileHover={shouldReduceMotion ? undefined : { x: 6 }}
-                    whileTap={shouldReduceMotion ? undefined : { scale: 0.99 }}
-                    transition={{ duration: 0.2, ease }}
-                  >
-                    <span className="arrival-row__number">{String(index + 1).padStart(2, "0")}</span>
-                    <span className="arrival-row__icon">
+              return (
+                <motion.a
+                  className="arrival-card"
+                  href={`mailto:hello@auradrive.example?subject=${encodeURIComponent(`AURA DRIVE - ${arrival.title}`)}`}
+                  key={arrival.title}
+                  aria-label={`Request ${arrival.title}`}
+                  variants={reveal}
+                  whileHover={shouldReduceMotion ? undefined : { y: -8 }}
+                  whileTap={shouldReduceMotion ? undefined : { scale: 0.99 }}
+                  transition={{ duration: 0.34, ease }}
+                >
+                  <img className="arrival-card__image" src={arrival.image} alt={arrival.alt} />
+                  <span className="arrival-card__wash" />
+
+                  <span className="arrival-card__top">
+                    <span className="arrival-card__icon">
                       <ArrivalIcon aria-hidden="true" size={19} />
                     </span>
-                    <span className="arrival-row__copy">
-                      <span className="arrival-row__title">{arrival.title}</span>
-                      <span className="arrival-row__description">{arrival.description}</span>
-                    </span>
-                    <span className="arrival-row__tone">{arrival.tone}</span>
-                  </motion.button>
-                );
-              })}
-            </div>
+                    <span className="arrival-card__number">{String(index + 1).padStart(2, "0")}</span>
+                  </span>
 
-            <motion.div className="arrival__stage" layout>
-              <img
-                src="/assets/bright-coastal-car.png"
-                alt="Luxury convertible on a coastal driveway"
-                className={`arrival__stage-image ${activeArrival.imageClass}`}
-              />
-              <div className="arrival__stage-wash" />
-              <AnimatePresence mode="wait">
-                <motion.div
-                  className="arrival__stage-copy"
-                  key={activeArrival.title}
-                  initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
-                  transition={{ duration: 0.24, ease }}
-                >
-                  <span>{activeArrival.tone}</span>
-                  <h3>{activeArrival.title}</h3>
-                  <p>{activeArrival.match}</p>
-                  <a
-                    href={`mailto:hello@auradrive.example?subject=${encodeURIComponent(`AURA DRIVE - ${activeArrival.title}`)}`}
-                    className="arrival__stage-link"
-                  >
-                    Request this arrival
-                    <ArrowRight aria-hidden="true" size={17} />
-                  </a>
-                </motion.div>
-              </AnimatePresence>
-            </motion.div>
-          </div>
+                  <span className="arrival-card__content">
+                    <span className="arrival-card__tone">{arrival.tone}</span>
+                    <span className="arrival-card__title">{arrival.title}</span>
+                    <span className="arrival-card__description">{arrival.description}</span>
+                    <span className="arrival-card__footer">
+                      <span>{arrival.match}</span>
+                      <span className="arrival-card__link">
+                        Plan this arrival
+                        <ArrowRight aria-hidden="true" size={17} />
+                      </span>
+                    </span>
+                  </span>
+                </motion.a>
+              );
+            })}
+          </motion.div>
         </div>
       </motion.section>
     </main>
