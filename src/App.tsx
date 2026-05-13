@@ -120,7 +120,7 @@ function FleetShowcaseCard({ active, index, progress, vehicle }: FleetShowcaseCa
   const enterStart = index === 0 ? 0 : Math.max(0, index * segment - 0.02);
   const enterEnd = index === 0 ? 0.04 : Math.min(1, index * segment + 0.02);
   const inputRange = [enterStart, enterEnd];
-  const cardY = useTransform(progress, inputRange, index === 0 ? [0, 0] : [620, 0]);
+  const cardY = useTransform(progress, inputRange, index === 0 ? [0, 0] : [780, 0]);
   const cardScale = useTransform(progress, inputRange, index === 0 ? [1, 1] : [0.965, 1]);
   const cardOpacity = useTransform(progress, [enterStart, Math.min(1, enterStart + 0.006)], index === 0 ? [1, 1] : [0, 1]);
   const motionStyle = {

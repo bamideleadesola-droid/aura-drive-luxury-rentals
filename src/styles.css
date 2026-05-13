@@ -688,16 +688,16 @@ button {
 
 .fleet-stage {
   position: sticky;
-  top: 80px;
-  height: min(820px, calc(100svh - 92px));
-  min-height: 620px;
+  top: 56px;
+  height: min(980px, calc(100svh + 160px));
+  min-height: 780px;
 }
 
 .fleet-showcase {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  padding: clamp(20px, 2.6vw, 30px);
+  padding: clamp(22px, 3vw, 36px);
   border: 1px solid rgba(23, 23, 23, 0.08);
   border-radius: 26px;
   background: #ffffff;
@@ -735,10 +735,10 @@ button {
 }
 
 .fleet-showcase__gallery {
-  height: clamp(300px, 38svh, 460px);
+  height: clamp(420px, 55svh, 620px);
   margin-top: clamp(16px, 2vw, 26px);
   display: grid;
-  grid-template-columns: minmax(0, 1.18fr) minmax(330px, 0.82fr);
+  grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.75fr);
   gap: 10px;
 }
 
