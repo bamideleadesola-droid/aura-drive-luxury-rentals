@@ -1,6 +1,6 @@
-import { type PointerEvent, useState } from "react";
+import { type CSSProperties, type PointerEvent, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowLeft, ArrowRight, BriefcaseBusiness, Gem, Images, Menu, Phone, Plane, Sparkles, Waves, X } from "lucide-react";
+import { ArrowRight, BriefcaseBusiness, Gem, Images, Menu, Phone, Plane, Sparkles, Waves, X } from "lucide-react";
 
 const arrivalTypes = [
   {
@@ -41,59 +41,59 @@ const arrivalTypes = [
   },
 ];
 
-const fleetCars = [
+const fleetShowcases = [
   {
-    name: "Mercedes S-Class",
-    category: "Executive sedan",
-    price: "from $820/day",
-    image: "/assets/fleet-s-class.jpg",
-    alt: "Black Mercedes S-Class in a bright studio",
-    specs: ["4 seats", "Chauffeur-ready", "Quiet cabin"],
-  },
-  {
+    id: "range-rover",
     name: "Range Rover Autobiography",
     category: "Luxury SUV",
     price: "from $940/day",
-    image: "/assets/fleet-range-rover.jpg",
-    alt: "Black Range Rover parked by palm trees and modern architecture",
-    specs: ["5 seats", "Large luggage", "All terrain"],
+    description: "Spacious, calm, and polished for airport pickup, luggage, family comfort, or a business route with presence.",
+    primary: {
+      src: "/assets/fleet-range-rover.jpg",
+      alt: "Black Range Rover parked by palm trees and modern architecture",
+    },
+    gallery: [
+      { src: "/assets/range-rover-cabin-front.jpg", alt: "Range Rover front cabin with leather seats" },
+      { src: "/assets/range-rover-cabin-rear.jpg", alt: "Range Rover rear cabin seating" },
+      { src: "/assets/range-rover-cabin-controls.jpg", alt: "Range Rover interior controls and center console" },
+      { src: "/assets/range-rover-cabin-profile.jpg", alt: "Range Rover side cabin profile" },
+    ],
   },
   {
-    name: "Porsche 911 GT3 RS",
-    category: "Performance coupe",
-    price: "from $1,180/day",
-    image: "/assets/fleet-porsche.jpg",
-    alt: "Close detail of a red Porsche 911 GT3 RS wheel and bodywork",
-    specs: ["2 seats", "Track-bred", "Sharp handling"],
+    id: "mercedes",
+    name: "Mercedes S-Class",
+    category: "Executive sedan",
+    price: "from $820/day",
+    description: "A quiet flagship sedan for airport arrivals, business days, and evenings that need a softer handover.",
+    primary: {
+      src: "/assets/fleet-s-class.jpg",
+      alt: "Black Mercedes S-Class in a bright studio",
+    },
+    gallery: [
+      { src: "/assets/mercedes-cabin-front.jpg", alt: "Mercedes S-Class front cabin and steering wheel" },
+      { src: "/assets/mercedes-cabin-rear.jpg", alt: "Mercedes S-Class rear cabin detail" },
+      { src: "/assets/mercedes-exterior-side.jpg", alt: "Mercedes S-Class exterior side profile" },
+      { src: "/assets/mercedes-exterior-rear.jpg", alt: "Mercedes S-Class rear exterior detail" },
+    ],
   },
   {
-    name: "Lamborghini Huracan",
-    category: "Supercar",
-    price: "from $1,520/day",
-    image: "/assets/fleet-lamborghini.jpg",
-    alt: "Blue Lamborghini Huracan driving at sunset",
-    specs: ["2 seats", "V10", "3.2 sec"],
-  },
-  {
+    id: "rolls-royce",
     name: "Rolls-Royce Ghost",
     category: "Chauffeur luxury",
     price: "from $1,640/day",
-    image: "/assets/fleet-rolls-royce.jpg",
-    alt: "Black Rolls-Royce Ghost in a refined city street",
-    specs: ["4 seats", "Privacy cabin", "Soft ride"],
-  },
-  {
-    name: "Ferrari Spider",
-    category: "Convertible",
-    price: "from $1,390/day",
-    image: "/assets/fleet-ferrari.jpg",
-    alt: "Red Ferrari driving through a city at night",
-    specs: ["2 seats", "Open top", "Weekend ready"],
+    description: "For quieter entrances, private transfers, and plans where comfort should feel invisible until it matters.",
+    primary: {
+      src: "/assets/fleet-rolls-royce.jpg",
+      alt: "Black Rolls-Royce Ghost in a refined city street",
+    },
+    gallery: [
+      { src: "/assets/ghost-cabin-front.jpg", alt: "Luxury sedan front cabin detail" },
+      { src: "/assets/ghost-cabin-seat.jpg", alt: "Luxury leather seat detail" },
+      { src: "/assets/ghost-cabin-dashboard.jpg", alt: "Luxury dashboard and steering wheel detail" },
+      { src: "/assets/ghost-cabin-rear.jpg", alt: "Luxury rear cabin detail" },
+    ],
   },
 ];
-
-const featuredVehicle = fleetCars[1];
-const galleryVehicles = [fleetCars[0], fleetCars[3], fleetCars[4], fleetCars[5]];
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -368,84 +368,114 @@ function App() {
         transition={{ duration: 0.72, ease }}
       >
         <div className="fleet__inner">
-          <motion.div
-            className="fleet-showcase"
-            initial={shouldReduceMotion ? false : "hidden"}
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.16 }}
-            variants={reveal}
-            transition={{ duration: 0.68, ease }}
-          >
-            <div className="fleet-showcase__top">
-              <a className="fleet-showcase__back" href="#arrivals">
-                <ArrowLeft aria-hidden="true" size={16} />
-                Browse vehicles
-              </a>
-            </div>
+          <div className="fleet__intro">
+            <motion.span
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.6 }}
+              transition={{ duration: 0.56, ease }}
+            >
+              Browse vehicles
+            </motion.span>
+            <motion.h2
+              id="fleet-heading"
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.6 }}
+              transition={{ duration: 0.64, ease }}
+            >
+              Browse the fleet.
+            </motion.h2>
+            <motion.p
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.6 }}
+              transition={{ duration: 0.64, delay: 0.08, ease }}
+            >
+              Exterior, cabin, and detail shots grouped by vehicle.
+            </motion.p>
+          </div>
 
-            <div className="fleet-showcase__gallery" aria-label="Featured luxury vehicle gallery">
-              <motion.a
-                className="fleet-showcase__main"
-                href={`mailto:hello@auradrive.example?subject=${encodeURIComponent(`AURA DRIVE - Reserve ${featuredVehicle.name}`)}`}
-                aria-label={`Reserve ${featuredVehicle.name}`}
-                whileHover={shouldReduceMotion ? undefined : { y: -4 }}
-                whileTap={shouldReduceMotion ? undefined : { scale: 0.996 }}
-                transition={{ duration: 0.32, ease }}
+          <div className="fleet-stack">
+            {fleetShowcases.map((vehicle, index) => (
+              <motion.article
+                className="fleet-showcase"
+                key={vehicle.name}
+                aria-labelledby={`${vehicle.id}-heading`}
+                initial={shouldReduceMotion ? false : "hidden"}
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.16 }}
+                variants={reveal}
+                style={{ "--card-offset": `${index * 14}px`, zIndex: 10 + index } as CSSProperties}
+                transition={{ duration: 0.68, ease }}
               >
-                <img src={featuredVehicle.image} alt={featuredVehicle.alt} />
-                <span className="fleet-showcase__image-wash" />
-                <span className="fleet-showcase__view-more">
-                  <Images aria-hidden="true" size={17} />
-                  View more
-                </span>
-              </motion.a>
+                <div className="fleet-showcase__top">
+                  <span className="fleet-showcase__kicker">{vehicle.name} gallery</span>
+                  <span className="fleet-showcase__index">{String(index + 1).padStart(2, "0")}</span>
+                </div>
 
-              <div className="fleet-showcase__thumbs">
-                {galleryVehicles.map((car) => (
+                <div className="fleet-showcase__gallery" aria-label={`${vehicle.name} image gallery`}>
                   <motion.a
-                    className="fleet-showcase__thumb"
-                    href={`mailto:hello@auradrive.example?subject=${encodeURIComponent(`AURA DRIVE - Reserve ${car.name}`)}`}
-                    key={car.name}
-                    aria-label={`Reserve ${car.name}`}
-                    whileHover={shouldReduceMotion ? undefined : { y: -3 }}
+                    className="fleet-showcase__main"
+                    href={`mailto:hello@auradrive.example?subject=${encodeURIComponent(`AURA DRIVE - Reserve ${vehicle.name}`)}`}
+                    aria-label={`Reserve ${vehicle.name}`}
+                    whileHover={shouldReduceMotion ? undefined : { y: -4 }}
                     whileTap={shouldReduceMotion ? undefined : { scale: 0.996 }}
-                    transition={{ duration: 0.28, ease }}
+                    transition={{ duration: 0.32, ease }}
                   >
-                    <img src={car.image} alt={car.alt} />
+                    <img src={vehicle.primary.src} alt={vehicle.primary.alt} />
+                    <span className="fleet-showcase__image-wash" />
+                    <span className="fleet-showcase__view-more">
+                      <Images aria-hidden="true" size={17} />
+                      View details
+                    </span>
                   </motion.a>
-                ))}
-              </div>
-            </div>
 
-            <div className="fleet-showcase__details">
-              <div className="fleet-showcase__copy">
-                <span className="fleet-showcase__eyebrow">{featuredVehicle.category}</span>
-                <h2 id="fleet-heading">{featuredVehicle.name}</h2>
-                <p>
-                  A spacious luxury SUV prepared for airport arrivals, business transfers, and weekend routes with a
-                  calm, polished presence.
-                </p>
-              </div>
+                  <div className="fleet-showcase__thumbs">
+                    {vehicle.gallery.map((image) => (
+                      <motion.a
+                        className="fleet-showcase__thumb"
+                        href={`mailto:hello@auradrive.example?subject=${encodeURIComponent(`AURA DRIVE - Reserve ${vehicle.name}`)}`}
+                        key={image.src}
+                        aria-label={`Reserve ${vehicle.name}`}
+                        whileHover={shouldReduceMotion ? undefined : { y: -3 }}
+                        whileTap={shouldReduceMotion ? undefined : { scale: 0.996 }}
+                        transition={{ duration: 0.28, ease }}
+                      >
+                        <img src={image.src} alt={image.alt} />
+                      </motion.a>
+                    ))}
+                  </div>
+                </div>
 
-              <motion.a
-                className="fleet-showcase__booking"
-                href={`mailto:hello@auradrive.example?subject=${encodeURIComponent(`AURA DRIVE - Reserve ${featuredVehicle.name}`)}`}
-                aria-label={`Reserve ${featuredVehicle.name}`}
-                whileHover={shouldReduceMotion ? undefined : { y: -4 }}
-                whileTap={shouldReduceMotion ? undefined : { scale: 0.996 }}
-                transition={{ duration: 0.32, ease }}
-              >
-                <span className="fleet-showcase__rate">
-                  <strong>{featuredVehicle.price}</strong>
-                  <span>Concierge delivery included</span>
-                </span>
-                <span className="fleet-showcase__button">
-                  Reserve this car
-                  <ArrowRight aria-hidden="true" size={17} />
-                </span>
-              </motion.a>
-            </div>
-          </motion.div>
+                <div className="fleet-showcase__details">
+                  <div className="fleet-showcase__copy">
+                    <span className="fleet-showcase__eyebrow">{vehicle.category}</span>
+                    <h3 id={`${vehicle.id}-heading`}>{vehicle.name}</h3>
+                    <p>{vehicle.description}</p>
+                  </div>
+
+                  <motion.a
+                    className="fleet-showcase__booking"
+                    href={`mailto:hello@auradrive.example?subject=${encodeURIComponent(`AURA DRIVE - Reserve ${vehicle.name}`)}`}
+                    aria-label={`Reserve ${vehicle.name}`}
+                    whileHover={shouldReduceMotion ? undefined : { y: -4 }}
+                    whileTap={shouldReduceMotion ? undefined : { scale: 0.996 }}
+                    transition={{ duration: 0.32, ease }}
+                  >
+                    <span className="fleet-showcase__rate">
+                      <strong>{vehicle.price}</strong>
+                      <span>Concierge delivery included</span>
+                    </span>
+                    <span className="fleet-showcase__button">
+                      Reserve this car
+                      <ArrowRight aria-hidden="true" size={17} />
+                    </span>
+                  </motion.a>
+                </div>
+              </motion.article>
+            ))}
+          </div>
         </div>
       </motion.section>
     </main>
