@@ -684,23 +684,25 @@ button {
   display: grid;
   align-items: start;
   gap: 0;
-  padding-bottom: clamp(48px, 9vw, 118px);
+  padding-bottom: clamp(180px, 22vw, 320px);
 }
 
 .fleet-showcase + .fleet-showcase {
-  margin-top: clamp(-104px, -7vw, -62px);
+  margin-top: clamp(-380px, -28vw, -240px);
 }
 
 .fleet-showcase {
   position: sticky;
-  top: calc(88px + var(--card-offset, 0px));
+  top: calc(92px + var(--card-offset, 0px));
   overflow: hidden;
   padding: clamp(22px, 3vw, 34px);
   border: 1px solid rgba(23, 23, 23, 0.08);
   border-radius: 26px;
   background: #ffffff;
+  transform-origin: center top;
+  will-change: transform, opacity;
   box-shadow:
-    0 30px 80px rgba(24, 24, 24, 0.1),
+    0 34px 92px rgba(24, 24, 24, 0.14),
     0 1px 0 rgba(255, 255, 255, 0.84) inset;
 }
 
@@ -1024,6 +1026,10 @@ button {
   .fleet-showcase {
     position: relative;
     top: auto;
+  }
+
+  .fleet-showcase + .fleet-showcase {
+    margin-top: 28px;
   }
 
   .fleet-showcase__gallery {

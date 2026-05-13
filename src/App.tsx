@@ -1,5 +1,5 @@
-import { type CSSProperties, type PointerEvent, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { type CSSProperties, type PointerEvent, useRef, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, BriefcaseBusiness, Gem, Images, Menu, Phone, Plane, Sparkles, Waves, X } from "lucide-react";
 
 const arrivalTypes = [
@@ -94,6 +94,114 @@ const fleetShowcases = [
     ],
   },
 ];
+
+type FleetShowcase = (typeof fleetShowcases)[number];
+
+type FleetShowcaseCardProps = {
+  index: number;
+  vehicle: FleetShowcase;
+};
+
+function FleetShowcaseCard({ index, vehicle }: FleetShowcaseCardProps) {
+  const cardRef = useRef<HTMLElement>(null);
+  const shouldReduceMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: cardRef,
+    offset: ["start 86%", "end 18%"],
+  });
+  const cardY = useTransform(scrollYProgress, [0, 0.25, 0.72, 1], [96, 0, -12, -34]);
+  const cardScale = useTransform(scrollYProgress, [0, 0.28, 0.72, 1], [0.955, 1, 0.982, 0.95]);
+  const cardOpacity = useTransform(scrollYProgress, [0, 0.18, 0.82, 1], [0.78, 1, 1, 0.9]);
+  const reveal = {
+    hidden: { opacity: 0, y: 30, scale: 0.98 },
+    visible: { opacity: 1, y: 0, scale: 1 },
+  };
+  const motionStyle = {
+    "--card-offset": `${index * 16}px`,
+    zIndex: 10 + index,
+    ...(shouldReduceMotion ? {} : { opacity: cardOpacity, scale: cardScale, y: cardY }),
+  } as CSSProperties;
+
+  return (
+    <motion.article
+      className="fleet-showcase"
+      key={vehicle.name}
+      aria-labelledby={`${vehicle.id}-heading`}
+      ref={cardRef}
+      initial={shouldReduceMotion ? false : "hidden"}
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.16 }}
+      variants={reveal}
+      style={motionStyle}
+      transition={{ duration: 0.68, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <div className="fleet-showcase__top">
+        <span className="fleet-showcase__kicker">{vehicle.name} gallery</span>
+        <span className="fleet-showcase__index">{String(index + 1).padStart(2, "0")}</span>
+      </div>
+
+      <div className="fleet-showcase__gallery" aria-label={`${vehicle.name} image gallery`}>
+        <motion.a
+          className="fleet-showcase__main"
+          href={`mailto:hello@auradrive.example?subject=${encodeURIComponent(`AURA DRIVE - Reserve ${vehicle.name}`)}`}
+          aria-label={`Reserve ${vehicle.name}`}
+          whileHover={shouldReduceMotion ? undefined : { y: -4 }}
+          whileTap={shouldReduceMotion ? undefined : { scale: 0.996 }}
+          transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <img src={vehicle.primary.src} alt={vehicle.primary.alt} />
+          <span className="fleet-showcase__image-wash" />
+          <span className="fleet-showcase__view-more">
+            <Images aria-hidden="true" size={17} />
+            View details
+          </span>
+        </motion.a>
+
+        <div className="fleet-showcase__thumbs">
+          {vehicle.gallery.map((image) => (
+            <motion.a
+              className="fleet-showcase__thumb"
+              href={`mailto:hello@auradrive.example?subject=${encodeURIComponent(`AURA DRIVE - Reserve ${vehicle.name}`)}`}
+              key={image.src}
+              aria-label={`Reserve ${vehicle.name}`}
+              whileHover={shouldReduceMotion ? undefined : { y: -3 }}
+              whileTap={shouldReduceMotion ? undefined : { scale: 0.996 }}
+              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <img src={image.src} alt={image.alt} />
+            </motion.a>
+          ))}
+        </div>
+      </div>
+
+      <div className="fleet-showcase__details">
+        <div className="fleet-showcase__copy">
+          <span className="fleet-showcase__eyebrow">{vehicle.category}</span>
+          <h3 id={`${vehicle.id}-heading`}>{vehicle.name}</h3>
+          <p>{vehicle.description}</p>
+        </div>
+
+        <motion.a
+          className="fleet-showcase__booking"
+          href={`mailto:hello@auradrive.example?subject=${encodeURIComponent(`AURA DRIVE - Reserve ${vehicle.name}`)}`}
+          aria-label={`Reserve ${vehicle.name}`}
+          whileHover={shouldReduceMotion ? undefined : { y: -4 }}
+          whileTap={shouldReduceMotion ? undefined : { scale: 0.996 }}
+          transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <span className="fleet-showcase__rate">
+            <strong>{vehicle.price}</strong>
+            <span>Concierge delivery included</span>
+          </span>
+          <span className="fleet-showcase__button">
+            Reserve this car
+            <ArrowRight aria-hidden="true" size={17} />
+          </span>
+        </motion.a>
+      </div>
+    </motion.article>
+  );
+}
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -398,82 +506,7 @@ function App() {
 
           <div className="fleet-stack">
             {fleetShowcases.map((vehicle, index) => (
-              <motion.article
-                className="fleet-showcase"
-                key={vehicle.name}
-                aria-labelledby={`${vehicle.id}-heading`}
-                initial={shouldReduceMotion ? false : "hidden"}
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.16 }}
-                variants={reveal}
-                style={{ "--card-offset": `${index * 14}px`, zIndex: 10 + index } as CSSProperties}
-                transition={{ duration: 0.68, ease }}
-              >
-                <div className="fleet-showcase__top">
-                  <span className="fleet-showcase__kicker">{vehicle.name} gallery</span>
-                  <span className="fleet-showcase__index">{String(index + 1).padStart(2, "0")}</span>
-                </div>
-
-                <div className="fleet-showcase__gallery" aria-label={`${vehicle.name} image gallery`}>
-                  <motion.a
-                    className="fleet-showcase__main"
-                    href={`mailto:hello@auradrive.example?subject=${encodeURIComponent(`AURA DRIVE - Reserve ${vehicle.name}`)}`}
-                    aria-label={`Reserve ${vehicle.name}`}
-                    whileHover={shouldReduceMotion ? undefined : { y: -4 }}
-                    whileTap={shouldReduceMotion ? undefined : { scale: 0.996 }}
-                    transition={{ duration: 0.32, ease }}
-                  >
-                    <img src={vehicle.primary.src} alt={vehicle.primary.alt} />
-                    <span className="fleet-showcase__image-wash" />
-                    <span className="fleet-showcase__view-more">
-                      <Images aria-hidden="true" size={17} />
-                      View details
-                    </span>
-                  </motion.a>
-
-                  <div className="fleet-showcase__thumbs">
-                    {vehicle.gallery.map((image) => (
-                      <motion.a
-                        className="fleet-showcase__thumb"
-                        href={`mailto:hello@auradrive.example?subject=${encodeURIComponent(`AURA DRIVE - Reserve ${vehicle.name}`)}`}
-                        key={image.src}
-                        aria-label={`Reserve ${vehicle.name}`}
-                        whileHover={shouldReduceMotion ? undefined : { y: -3 }}
-                        whileTap={shouldReduceMotion ? undefined : { scale: 0.996 }}
-                        transition={{ duration: 0.28, ease }}
-                      >
-                        <img src={image.src} alt={image.alt} />
-                      </motion.a>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="fleet-showcase__details">
-                  <div className="fleet-showcase__copy">
-                    <span className="fleet-showcase__eyebrow">{vehicle.category}</span>
-                    <h3 id={`${vehicle.id}-heading`}>{vehicle.name}</h3>
-                    <p>{vehicle.description}</p>
-                  </div>
-
-                  <motion.a
-                    className="fleet-showcase__booking"
-                    href={`mailto:hello@auradrive.example?subject=${encodeURIComponent(`AURA DRIVE - Reserve ${vehicle.name}`)}`}
-                    aria-label={`Reserve ${vehicle.name}`}
-                    whileHover={shouldReduceMotion ? undefined : { y: -4 }}
-                    whileTap={shouldReduceMotion ? undefined : { scale: 0.996 }}
-                    transition={{ duration: 0.32, ease }}
-                  >
-                    <span className="fleet-showcase__rate">
-                      <strong>{vehicle.price}</strong>
-                      <span>Concierge delivery included</span>
-                    </span>
-                    <span className="fleet-showcase__button">
-                      Reserve this car
-                      <ArrowRight aria-hidden="true" size={17} />
-                    </span>
-                  </motion.a>
-                </div>
-              </motion.article>
+              <FleetShowcaseCard index={index} key={vehicle.name} vehicle={vehicle} />
             ))}
           </div>
         </div>
