@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { type PointerEvent, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, BriefcaseBusiness, Gem, Menu, Phone, Plane, Sparkles, Waves, X } from "lucide-react";
 
@@ -43,6 +43,7 @@ const arrivalTypes = [
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeArrival, setActiveArrival] = useState<number | null>(null);
   const shouldReduceMotion = useReducedMotion();
 
   const ease = [0.22, 1, 0.36, 1] as const;
@@ -57,6 +58,26 @@ function App() {
         animate: { scale: 1.16, opacity: 1 },
         transition: { duration: 1.4, ease },
       };
+  const handleArrivalPointerMove = (event: PointerEvent<HTMLAnchorElement>) => {
+    if (shouldReduceMotion) {
+      return;
+    }
+
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const x = ((event.clientX - bounds.left) / bounds.width) * 100;
+    const y = ((event.clientY - bounds.top) / bounds.height) * 100;
+
+    event.currentTarget.style.setProperty("--pointer-x", `${x}%`);
+    event.currentTarget.style.setProperty("--pointer-y", `${y}%`);
+    event.currentTarget.style.setProperty("--parallax-x", `${(50 - x) * 0.18}px`);
+    event.currentTarget.style.setProperty("--parallax-y", `${(50 - y) * 0.14}px`);
+  };
+  const resetArrivalPointer = (event: PointerEvent<HTMLAnchorElement>) => {
+    event.currentTarget.style.setProperty("--pointer-x", "50%");
+    event.currentTarget.style.setProperty("--pointer-y", "50%");
+    event.currentTarget.style.setProperty("--parallax-x", "0px");
+    event.currentTarget.style.setProperty("--parallax-y", "0px");
+  };
 
   return (
     <main className="site-shell">
@@ -235,14 +256,25 @@ function App() {
 
               return (
                 <motion.a
-                  className="arrival-card"
+                  className={`arrival-card ${activeArrival === index ? "arrival-card--active" : ""} ${
+                    activeArrival !== null && activeArrival !== index ? "arrival-card--inactive" : ""
+                  }`}
                   href={`mailto:hello@auradrive.example?subject=${encodeURIComponent(`AURA DRIVE - ${arrival.title}`)}`}
                   key={arrival.title}
                   aria-label={`Request ${arrival.title}`}
                   variants={reveal}
-                  whileHover={shouldReduceMotion ? undefined : { y: -8 }}
-                  whileTap={shouldReduceMotion ? undefined : { scale: 0.99 }}
-                  transition={{ duration: 0.34, ease }}
+                  onFocus={() => setActiveArrival(index)}
+                  onBlur={() => setActiveArrival(null)}
+                  onPointerEnter={() => setActiveArrival(index)}
+                  onPointerLeave={(event) => {
+                    setActiveArrival(null);
+                    resetArrivalPointer(event);
+                  }}
+                  onPointerMove={handleArrivalPointerMove}
+                  whileHover={shouldReduceMotion ? undefined : { y: -16, scale: 1.012 }}
+                  whileFocus={shouldReduceMotion ? undefined : { y: -10, scale: 1.008 }}
+                  whileTap={shouldReduceMotion ? undefined : { y: -6, scale: 0.992 }}
+                  transition={{ duration: 0.38, ease }}
                 >
                   <img className="arrival-card__image" src={arrival.image} alt={arrival.alt} />
                   <span className="arrival-card__wash" />
