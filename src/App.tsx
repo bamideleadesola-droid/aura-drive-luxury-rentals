@@ -132,7 +132,7 @@ function App() {
           </motion.div>
 
           <motion.h1 variants={reveal} transition={{ duration: 0.68, ease }}>
-            Premium cars for every arrival
+            Premium cars for <span>every arrival</span>
           </motion.h1>
           <motion.p variants={reveal} transition={{ duration: 0.6, ease }}>
             Curated luxury cars, delivered with concierge care.
