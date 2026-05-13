@@ -1,6 +1,6 @@
 import { type PointerEvent, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, BriefcaseBusiness, Gem, Menu, Phone, Plane, Sparkles, Waves, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, BriefcaseBusiness, Gem, Images, Menu, Phone, Plane, Sparkles, Waves, X } from "lucide-react";
 
 const arrivalTypes = [
   {
@@ -92,10 +92,12 @@ const fleetCars = [
   },
 ];
 
+const featuredVehicle = fleetCars[1];
+const galleryVehicles = [fleetCars[0], fleetCars[3], fleetCars[4], fleetCars[5]];
+
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeArrival, setActiveArrival] = useState<number | null>(null);
-  const [activeFleet, setActiveFleet] = useState<number | null>(null);
   const shouldReduceMotion = useReducedMotion();
 
   const ease = [0.22, 1, 0.36, 1] as const;
@@ -366,80 +368,83 @@ function App() {
         transition={{ duration: 0.72, ease }}
       >
         <div className="fleet__inner">
-          <div className="fleet__header">
-            <motion.h2
-              id="fleet-heading"
-              initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.6 }}
-              transition={{ duration: 0.64, ease }}
-            >
-              Select from the fleet.
-            </motion.h2>
-            <motion.p
-              initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.6 }}
-              transition={{ duration: 0.64, delay: 0.08, ease }}
-            >
-              A tighter edit of executive sedans, SUVs, convertibles, and supercars ready for concierge delivery.
-            </motion.p>
-          </div>
-
           <motion.div
-            className="fleet__grid"
-            aria-label="Available luxury cars"
+            className="fleet-showcase"
             initial={shouldReduceMotion ? false : "hidden"}
             whileInView="visible"
-            viewport={{ once: true, amount: 0.12 }}
-            transition={{ staggerChildren: 0.06 }}
+            viewport={{ once: true, amount: 0.16 }}
+            variants={reveal}
+            transition={{ duration: 0.68, ease }}
           >
-            {fleetCars.map((car, index) => (
-              <motion.a
-                className={`fleet-card ${activeFleet === index ? "fleet-card--active" : ""} ${
-                  activeFleet !== null && activeFleet !== index ? "fleet-card--inactive" : ""
-                }`}
-                href={`mailto:hello@auradrive.example?subject=${encodeURIComponent(`AURA DRIVE - Reserve ${car.name}`)}`}
-                key={car.name}
-                aria-label={`Reserve ${car.name}`}
-                variants={reveal}
-                onFocus={() => setActiveFleet(index)}
-                onBlur={() => setActiveFleet(null)}
-                onPointerEnter={() => setActiveFleet(index)}
-                onPointerLeave={(event) => {
-                  setActiveFleet(null);
-                  resetCardPointer(event);
-                }}
-                onPointerMove={handleCardPointerMove}
-                whileHover={shouldReduceMotion ? undefined : { y: -12, scale: 1.01 }}
-                whileFocus={shouldReduceMotion ? undefined : { y: -8, scale: 1.006 }}
-                whileTap={shouldReduceMotion ? undefined : { scale: 0.992 }}
-                transition={{ duration: 0.34, ease }}
-              >
-                <span className="fleet-card__media">
-                  <img className="fleet-card__image" src={car.image} alt={car.alt} />
-                  <span className="fleet-card__shine" />
-                  <span className="fleet-card__category">{car.category}</span>
-                  <span className="fleet-card__price">{car.price}</span>
-                </span>
+            <div className="fleet-showcase__top">
+              <a className="fleet-showcase__back" href="#arrivals">
+                <ArrowLeft aria-hidden="true" size={16} />
+                Browse vehicles
+              </a>
+            </div>
 
-                <span className="fleet-card__body">
-                  <span className="fleet-card__title-row">
-                    <span className="fleet-card__name">{car.name}</span>
-                    <span className="fleet-card__count">{String(index + 1).padStart(2, "0")}</span>
-                  </span>
-                  <span className="fleet-card__specs">
-                    {car.specs.map((spec) => (
-                      <span key={spec}>{spec}</span>
-                    ))}
-                  </span>
-                  <span className="fleet-card__footer">
-                    Reserve this car
-                    <ArrowRight aria-hidden="true" size={17} />
-                  </span>
+            <div className="fleet-showcase__gallery" aria-label="Featured luxury vehicle gallery">
+              <motion.a
+                className="fleet-showcase__main"
+                href={`mailto:hello@auradrive.example?subject=${encodeURIComponent(`AURA DRIVE - Reserve ${featuredVehicle.name}`)}`}
+                aria-label={`Reserve ${featuredVehicle.name}`}
+                whileHover={shouldReduceMotion ? undefined : { y: -4 }}
+                whileTap={shouldReduceMotion ? undefined : { scale: 0.996 }}
+                transition={{ duration: 0.32, ease }}
+              >
+                <img src={featuredVehicle.image} alt={featuredVehicle.alt} />
+                <span className="fleet-showcase__image-wash" />
+                <span className="fleet-showcase__view-more">
+                  <Images aria-hidden="true" size={17} />
+                  View more
                 </span>
               </motion.a>
-            ))}
+
+              <div className="fleet-showcase__thumbs">
+                {galleryVehicles.map((car) => (
+                  <motion.a
+                    className="fleet-showcase__thumb"
+                    href={`mailto:hello@auradrive.example?subject=${encodeURIComponent(`AURA DRIVE - Reserve ${car.name}`)}`}
+                    key={car.name}
+                    aria-label={`Reserve ${car.name}`}
+                    whileHover={shouldReduceMotion ? undefined : { y: -3 }}
+                    whileTap={shouldReduceMotion ? undefined : { scale: 0.996 }}
+                    transition={{ duration: 0.28, ease }}
+                  >
+                    <img src={car.image} alt={car.alt} />
+                  </motion.a>
+                ))}
+              </div>
+            </div>
+
+            <div className="fleet-showcase__details">
+              <div className="fleet-showcase__copy">
+                <span className="fleet-showcase__eyebrow">{featuredVehicle.category}</span>
+                <h2 id="fleet-heading">{featuredVehicle.name}</h2>
+                <p>
+                  A spacious luxury SUV prepared for airport arrivals, business transfers, and weekend routes with a
+                  calm, polished presence.
+                </p>
+              </div>
+
+              <motion.a
+                className="fleet-showcase__booking"
+                href={`mailto:hello@auradrive.example?subject=${encodeURIComponent(`AURA DRIVE - Reserve ${featuredVehicle.name}`)}`}
+                aria-label={`Reserve ${featuredVehicle.name}`}
+                whileHover={shouldReduceMotion ? undefined : { y: -4 }}
+                whileTap={shouldReduceMotion ? undefined : { scale: 0.996 }}
+                transition={{ duration: 0.32, ease }}
+              >
+                <span className="fleet-showcase__rate">
+                  <strong>{featuredVehicle.price}</strong>
+                  <span>Concierge delivery included</span>
+                </span>
+                <span className="fleet-showcase__button">
+                  Reserve this car
+                  <ArrowRight aria-hidden="true" size={17} />
+                </span>
+              </motion.a>
+            </div>
           </motion.div>
         </div>
       </motion.section>
