@@ -1,10 +1,47 @@
 import { useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, Gem, Menu, Phone, X } from "lucide-react";
+import { ArrowRight, BriefcaseBusiness, Gem, Menu, Phone, Plane, Sparkles, Waves, X } from "lucide-react";
+
+const arrivalTypes = [
+  {
+    title: "Airport arrival",
+    description: "Quiet handover, luggage space, and a composed first mile.",
+    match: "Executive sedan or long-wheelbase SUV",
+    tone: "Composed",
+    icon: Plane,
+    imageClass: "arrival-card__image--airport",
+  },
+  {
+    title: "Business day",
+    description: "Discreet cars prepared for meetings, transfers, and long waits.",
+    match: "S-Class, 7 Series, or Range Rover",
+    tone: "Discreet",
+    icon: BriefcaseBusiness,
+    imageClass: "arrival-card__image--business",
+  },
+  {
+    title: "Weekend coast",
+    description: "Open routes, grand tourers, and SUVs with room to breathe.",
+    match: "Convertible, GT coupe, or premium SUV",
+    tone: "Open",
+    icon: Waves,
+    imageClass: "arrival-card__image--coast",
+  },
+  {
+    title: "Evening entrance",
+    description: "Sharper arrivals for private dinners, events, and late plans.",
+    match: "Supercar, coupe, or chauffeur-ready sedan",
+    tone: "Sharp",
+    icon: Sparkles,
+    imageClass: "arrival-card__image--evening",
+  },
+];
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [selectedArrival, setSelectedArrival] = useState(0);
   const shouldReduceMotion = useReducedMotion();
+  const activeArrival = arrivalTypes[selectedArrival];
 
   const ease = [0.22, 1, 0.36, 1] as const;
   const reveal = {
@@ -33,7 +70,7 @@ function App() {
         </motion.a>
 
         <nav className="nav__links" aria-label="Primary">
-          <motion.a href="#reserve" whileHover={{ y: -1 }}>
+          <motion.a href="#arrivals" whileHover={{ y: -1 }}>
             Cars
           </motion.a>
           <motion.a href="#reserve" whileHover={{ y: -1 }}>
@@ -88,7 +125,7 @@ function App() {
               exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -8, scale: 0.98 }}
               transition={{ duration: 0.18, ease }}
             >
-              <a href="#reserve" onClick={() => setMenuOpen(false)}>
+              <a href="#arrivals" onClick={() => setMenuOpen(false)}>
                 Cars
               </a>
               <a href="#reserve" onClick={() => setMenuOpen(false)}>
@@ -151,6 +188,107 @@ function App() {
             </motion.a>
           </motion.div>
         </motion.div>
+      </motion.section>
+
+      <motion.section
+        className="arrival"
+        id="arrivals"
+        aria-labelledby="arrival-heading"
+        initial={shouldReduceMotion ? false : { opacity: 0, y: 28 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.24 }}
+        transition={{ duration: 0.72, ease }}
+      >
+        <div className="arrival__inner">
+          <div className="arrival__intro">
+            <motion.h2
+              id="arrival-heading"
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.6 }}
+              transition={{ duration: 0.64, ease }}
+            >
+              Choose the arrival. We'll match the car.
+            </motion.h2>
+            <motion.p
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.6 }}
+              transition={{ duration: 0.64, delay: 0.08, ease }}
+            >
+              From airport pickups to weekend escapes, every drive is prepared with concierge care and the right presence.
+            </motion.p>
+          </div>
+
+          <div className="arrival__grid">
+            <motion.div className="arrival__feature" layout>
+              <img
+                src="/assets/bright-coastal-car.png"
+                alt="Luxury convertible on a coastal driveway"
+                className={`arrival__feature-image ${activeArrival.imageClass}`}
+              />
+              <div className="arrival__feature-wash" />
+              <AnimatePresence mode="wait">
+                <motion.div
+                  className="arrival__feature-copy"
+                  key={activeArrival.title}
+                  initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
+                  transition={{ duration: 0.24, ease }}
+                >
+                  <span>{activeArrival.tone}</span>
+                  <h3>{activeArrival.title}</h3>
+                  <p>{activeArrival.match}</p>
+                  <a
+                    href={`mailto:hello@auradrive.example?subject=${encodeURIComponent(`AURA DRIVE - ${activeArrival.title}`)}`}
+                    className="arrival__feature-link"
+                  >
+                    Request this arrival
+                    <ArrowRight aria-hidden="true" size={17} />
+                  </a>
+                </motion.div>
+              </AnimatePresence>
+            </motion.div>
+
+            <div className="arrival__cards" aria-label="Arrival options">
+              {arrivalTypes.map((arrival, index) => {
+                const ArrivalIcon = arrival.icon;
+                const isSelected = selectedArrival === index;
+
+                return (
+                  <motion.button
+                    className={`arrival-card ${isSelected ? "arrival-card--active" : ""}`}
+                    type="button"
+                    key={arrival.title}
+                    onClick={() => setSelectedArrival(index)}
+                    aria-pressed={isSelected}
+                    whileHover={shouldReduceMotion ? undefined : { y: -4 }}
+                    whileTap={shouldReduceMotion ? undefined : { scale: 0.985 }}
+                    transition={{ duration: 0.2, ease }}
+                  >
+                    <span className="arrival-card__media">
+                      <img
+                        src="/assets/bright-coastal-car.png"
+                        alt=""
+                        aria-hidden="true"
+                        className={`arrival-card__image ${arrival.imageClass}`}
+                      />
+                    </span>
+                    <span className="arrival-card__body">
+                      <span className="arrival-card__meta">
+                        <ArrivalIcon aria-hidden="true" size={18} />
+                        {arrival.tone}
+                      </span>
+                      <span className="arrival-card__title">{arrival.title}</span>
+                      <span className="arrival-card__description">{arrival.description}</span>
+                    </span>
+                  </motion.button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
       </motion.section>
     </main>
   );
