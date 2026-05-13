@@ -9,7 +9,7 @@ const arrivalTypes = [
     match: "Executive sedan or long-wheelbase SUV",
     tone: "Composed",
     icon: Plane,
-    imageClass: "arrival-card__image--airport",
+    imageClass: "arrival-image--airport",
   },
   {
     title: "Business day",
@@ -17,7 +17,7 @@ const arrivalTypes = [
     match: "S-Class, 7 Series, or Range Rover",
     tone: "Discreet",
     icon: BriefcaseBusiness,
-    imageClass: "arrival-card__image--business",
+    imageClass: "arrival-image--business",
   },
   {
     title: "Weekend coast",
@@ -25,7 +25,7 @@ const arrivalTypes = [
     match: "Convertible, GT coupe, or premium SUV",
     tone: "Open",
     icon: Waves,
-    imageClass: "arrival-card__image--coast",
+    imageClass: "arrival-image--coast",
   },
   {
     title: "Evening entrance",
@@ -33,7 +33,7 @@ const arrivalTypes = [
     match: "Supercar, coupe, or chauffeur-ready sedan",
     tone: "Sharp",
     icon: Sparkles,
-    imageClass: "arrival-card__image--evening",
+    imageClass: "arrival-image--evening",
   },
 ];
 
@@ -196,7 +196,7 @@ function App() {
         aria-labelledby="arrival-heading"
         initial={shouldReduceMotion ? false : { opacity: 0, y: 28 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.24 }}
+        viewport={{ once: true, amount: 0.18 }}
         transition={{ duration: 0.72, ease }}
       >
         <div className="arrival__inner">
@@ -216,23 +216,54 @@ function App() {
               viewport={{ once: true, amount: 0.6 }}
               transition={{ duration: 0.64, delay: 0.08, ease }}
             >
-              From airport pickups to weekend escapes, every drive is prepared with concierge care and the right presence.
+              A concierge-led fleet, shaped around the moment you need to arrive for.
             </motion.p>
           </div>
 
-          <div className="arrival__grid">
-            <motion.div className="arrival__feature" layout>
+          <div className="arrival__index">
+            <div className="arrival__list" aria-label="Arrival options">
+              {arrivalTypes.map((arrival, index) => {
+                const ArrivalIcon = arrival.icon;
+                const isSelected = selectedArrival === index;
+
+                return (
+                  <motion.button
+                    className={`arrival-row ${isSelected ? "arrival-row--active" : ""}`}
+                    type="button"
+                    key={arrival.title}
+                    onClick={() => setSelectedArrival(index)}
+                    onMouseEnter={() => setSelectedArrival(index)}
+                    aria-pressed={isSelected}
+                    whileHover={shouldReduceMotion ? undefined : { x: 6 }}
+                    whileTap={shouldReduceMotion ? undefined : { scale: 0.99 }}
+                    transition={{ duration: 0.2, ease }}
+                  >
+                    <span className="arrival-row__number">{String(index + 1).padStart(2, "0")}</span>
+                    <span className="arrival-row__icon">
+                      <ArrivalIcon aria-hidden="true" size={19} />
+                    </span>
+                    <span className="arrival-row__copy">
+                      <span className="arrival-row__title">{arrival.title}</span>
+                      <span className="arrival-row__description">{arrival.description}</span>
+                    </span>
+                    <span className="arrival-row__tone">{arrival.tone}</span>
+                  </motion.button>
+                );
+              })}
+            </div>
+
+            <motion.div className="arrival__stage" layout>
               <img
                 src="/assets/bright-coastal-car.png"
                 alt="Luxury convertible on a coastal driveway"
-                className={`arrival__feature-image ${activeArrival.imageClass}`}
+                className={`arrival__stage-image ${activeArrival.imageClass}`}
               />
-              <div className="arrival__feature-wash" />
+              <div className="arrival__stage-wash" />
               <AnimatePresence mode="wait">
                 <motion.div
-                  className="arrival__feature-copy"
+                  className="arrival__stage-copy"
                   key={activeArrival.title}
-                  initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
+                  initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
                   transition={{ duration: 0.24, ease }}
@@ -242,7 +273,7 @@ function App() {
                   <p>{activeArrival.match}</p>
                   <a
                     href={`mailto:hello@auradrive.example?subject=${encodeURIComponent(`AURA DRIVE - ${activeArrival.title}`)}`}
-                    className="arrival__feature-link"
+                    className="arrival__stage-link"
                   >
                     Request this arrival
                     <ArrowRight aria-hidden="true" size={17} />
@@ -250,43 +281,6 @@ function App() {
                 </motion.div>
               </AnimatePresence>
             </motion.div>
-
-            <div className="arrival__cards" aria-label="Arrival options">
-              {arrivalTypes.map((arrival, index) => {
-                const ArrivalIcon = arrival.icon;
-                const isSelected = selectedArrival === index;
-
-                return (
-                  <motion.button
-                    className={`arrival-card ${isSelected ? "arrival-card--active" : ""}`}
-                    type="button"
-                    key={arrival.title}
-                    onClick={() => setSelectedArrival(index)}
-                    aria-pressed={isSelected}
-                    whileHover={shouldReduceMotion ? undefined : { y: -4 }}
-                    whileTap={shouldReduceMotion ? undefined : { scale: 0.985 }}
-                    transition={{ duration: 0.2, ease }}
-                  >
-                    <span className="arrival-card__media">
-                      <img
-                        src="/assets/bright-coastal-car.png"
-                        alt=""
-                        aria-hidden="true"
-                        className={`arrival-card__image ${arrival.imageClass}`}
-                      />
-                    </span>
-                    <span className="arrival-card__body">
-                      <span className="arrival-card__meta">
-                        <ArrivalIcon aria-hidden="true" size={18} />
-                        {arrival.tone}
-                      </span>
-                      <span className="arrival-card__title">{arrival.title}</span>
-                      <span className="arrival-card__description">{arrival.description}</span>
-                    </span>
-                  </motion.button>
-                );
-              })}
-            </div>
           </div>
         </div>
       </motion.section>
