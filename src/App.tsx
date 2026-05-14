@@ -9,7 +9,7 @@ import {
   useScroll,
   useTransform,
 } from "framer-motion";
-import { ArrowRight, BriefcaseBusiness, Gem, Images, Menu, Pause, Phone, Plane, Play, Sparkles, Waves, X } from "lucide-react";
+import { ArrowRight, BriefcaseBusiness, Gem, Images, Menu, Pause, Phone, Plane, Play, Quote, Sparkles, Waves, X } from "lucide-react";
 
 const arrivalTypes = [
   {
@@ -120,6 +120,33 @@ const reservationSteps = [
   {
     title: "Meet the car ready",
     detail: "Clean, fueled, timed, and handed over without the back-and-forth.",
+  },
+];
+
+const testimonials = [
+  {
+    quote: "The car was waiting when our bags arrived. Clean cabin, calm handover, and no calls while we were trying to get moving.",
+    client: "Private client",
+    trip: "Airport arrival",
+    vehicle: "Range Rover Autobiography",
+  },
+  {
+    quote: "For a two-day roadshow, the S-Class felt discreet and on time at every stop. The team handled the changes quietly.",
+    client: "Executive assistant",
+    trip: "Business day",
+    vehicle: "Mercedes S-Class",
+  },
+  {
+    quote: "We booked late for a family weekend and it still felt considered. Enough space, clear pricing, and a very easy return.",
+    client: "Family trip",
+    trip: "Weekend route",
+    vehicle: "Range Rover Autobiography",
+  },
+  {
+    quote: "The Ghost arrived exactly when requested, detailed properly, and the handover took less than five minutes.",
+    client: "Event guest",
+    trip: "Evening entrance",
+    vehicle: "Rolls-Royce Ghost",
   },
 ];
 
@@ -682,6 +709,84 @@ function App() {
                 </span>
               </motion.div>
             ))}
+          </motion.div>
+        </div>
+      </motion.section>
+
+      <motion.section
+        className="testimonials"
+        id="testimonials"
+        aria-labelledby="testimonials-heading"
+        initial={shouldReduceMotion ? false : { opacity: 0, y: 28 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.18 }}
+        transition={{ duration: 0.72, ease }}
+      >
+        <div className="testimonials__inner">
+          <div className="testimonials__intro">
+            <motion.h2
+              id="testimonials-heading"
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.6 }}
+              transition={{ duration: 0.64, ease }}
+            >
+              What clients remember.
+            </motion.h2>
+            <motion.p
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.6 }}
+              transition={{ duration: 0.64, delay: 0.08, ease }}
+            >
+              The timing, the handover, and the feeling that the car was already handled.
+            </motion.p>
+          </div>
+
+          <motion.div
+            className="testimonials__layout"
+            aria-label="Client testimonials"
+            initial={shouldReduceMotion ? false : "hidden"}
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.22 }}
+            transition={{ staggerChildren: 0.08 }}
+          >
+            <motion.article
+              className="testimonial-card testimonial-card--featured"
+              variants={reveal}
+              transition={{ duration: 0.62, ease }}
+              whileHover={shouldReduceMotion ? undefined : { y: -6 }}
+            >
+              <span className="testimonial-card__quote-icon">
+                <Quote aria-hidden="true" size={26} />
+              </span>
+              <blockquote>{testimonials[0].quote}</blockquote>
+              <footer>
+                <span>{testimonials[0].client}</span>
+                <span>
+                  {testimonials[0].trip} / {testimonials[0].vehicle}
+                </span>
+              </footer>
+            </motion.article>
+
+            <div className="testimonials__grid">
+              {testimonials.slice(1).map((testimonial) => (
+                <motion.article
+                  className="testimonial-card"
+                  key={`${testimonial.client}-${testimonial.trip}`}
+                  variants={reveal}
+                  transition={{ duration: 0.56, ease }}
+                  whileHover={shouldReduceMotion ? undefined : { y: -5 }}
+                >
+                  <span className="testimonial-card__trip">{testimonial.trip}</span>
+                  <blockquote>{testimonial.quote}</blockquote>
+                  <footer>
+                    <span>{testimonial.client}</span>
+                    <span>{testimonial.vehicle}</span>
+                  </footer>
+                </motion.article>
+              ))}
+            </div>
           </motion.div>
         </div>
       </motion.section>
