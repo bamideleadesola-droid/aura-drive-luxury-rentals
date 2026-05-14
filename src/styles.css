@@ -1052,18 +1052,50 @@ button {
 }
 
 .process {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
   padding: clamp(82px, 9vw, 142px) clamp(18px, 4.2vw, 78px) clamp(94px, 9vw, 142px);
-  color: var(--ink);
-  background: #ffffff;
-  border-top: 1px solid rgba(23, 23, 23, 0.08);
+  color: #f7f7f2;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(142, 121, 82, 0.2), rgba(142, 121, 82, 0) 34%),
+    radial-gradient(circle at 88% 86%, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0) 34%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0) 28%),
+    linear-gradient(135deg, #070707 0%, #10100e 48%, #17130f 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.process::before {
+  content: "";
+  position: absolute;
+  inset: clamp(18px, 2.8vw, 42px);
+  z-index: -1;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: clamp(24px, 2.5vw, 38px);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.2) inset;
+  pointer-events: none;
+}
+
+.process::after {
+  content: "";
+  position: absolute;
+  right: -18%;
+  bottom: -28%;
+  z-index: -1;
+  width: min(64vw, 780px);
+  aspect-ratio: 1;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0) 64%);
+  filter: blur(1px);
+  opacity: 0.72;
+  pointer-events: none;
 }
 
 .process__inner {
   width: min(100%, 1320px);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: minmax(320px, 0.88fr) minmax(0, 1.12fr);
-  gap: clamp(42px, 7vw, 112px);
+  grid-template-columns: minmax(380px, 1fr) minmax(0, 1.08fr);
+  gap: clamp(42px, 6.2vw, 96px);
   align-items: start;
 }
 
@@ -1076,22 +1108,25 @@ button {
 .process__intro h2 {
   max-width: 640px;
   margin: 0;
-  color: #080808;
-  font-size: clamp(38px, 4.6vw, 70px);
+  color: #ffffff;
+  font-size: clamp(38px, 4.35vw, 64px);
   line-height: 0.98;
   font-weight: 500;
   letter-spacing: 0;
+  text-wrap: balance;
 }
 
 .process__intro p {
   max-width: 430px;
   margin: 24px 0 0;
-  color: rgba(23, 23, 23, 0.62);
+  color: rgba(247, 247, 242, 0.62);
   font-size: clamp(16px, 1.2vw, 19px);
   line-height: 1.58;
 }
 
 .process__cta {
+  position: relative;
+  overflow: hidden;
   width: fit-content;
   min-height: 58px;
   margin-top: clamp(30px, 4vw, 52px);
@@ -1100,10 +1135,11 @@ button {
   align-items: center;
   justify-content: center;
   gap: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
   border-radius: 8px;
-  color: #ffffff;
-  background: #080808;
-  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.16);
+  color: #11110f;
+  background: #ffffff;
+  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.34);
   font-size: 15px;
   font-weight: 700;
   transition:
@@ -1111,8 +1147,23 @@ button {
     transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+.process__cta::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: 7px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.58), rgba(255, 255, 255, 0));
+  opacity: 0.36;
+  pointer-events: none;
+}
+
+.process__cta > * {
+  position: relative;
+  z-index: 1;
+}
+
 .process__cta:hover {
-  background: #1b1b1b;
+  background: #f1efe9;
 }
 
 .process__cta svg {
@@ -1124,40 +1175,80 @@ button {
 }
 
 .process__steps {
-  border-top: 1px solid rgba(23, 23, 23, 0.14);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.028));
+  box-shadow:
+    0 34px 90px rgba(0, 0, 0, 0.24),
+    0 1px 0 rgba(255, 255, 255, 0.08) inset;
+  backdrop-filter: blur(18px);
+}
+
+.process__steps::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0) 34%);
+  opacity: 0.34;
+  pointer-events: none;
 }
 
 .process-step {
+  position: relative;
   display: grid;
   grid-template-columns: 90px minmax(0, 1fr);
   gap: clamp(20px, 3vw, 42px);
-  padding: clamp(28px, 4vw, 48px) 0;
-  border-bottom: 1px solid rgba(23, 23, 23, 0.14);
+  padding: clamp(30px, 4vw, 50px) clamp(24px, 4vw, 52px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   cursor: default;
+  transition:
+    background 220ms ease,
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.process-step:last-child {
+  border-bottom: 0;
+}
+
+.process-step::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0));
+  opacity: 0;
+  transition: opacity 220ms ease;
 }
 
 .process-step__number {
+  position: relative;
+  z-index: 1;
   width: 52px;
   height: 52px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(23, 23, 23, 0.13);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 999px;
-  color: rgba(23, 23, 23, 0.62);
-  background: #ffffff;
+  color: rgba(247, 247, 242, 0.7);
+  background: rgba(255, 255, 255, 0.045);
   font-size: 13px;
   font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 .process-step__content {
+  position: relative;
+  z-index: 1;
   min-width: 0;
   display: grid;
   gap: 12px;
 }
 
 .process-step__title {
-  color: #080808;
+  color: #ffffff;
   font-size: clamp(24px, 2.5vw, 38px);
   line-height: 1.05;
   font-weight: 500;
@@ -1165,15 +1256,23 @@ button {
 
 .process-step__detail {
   max-width: 520px;
-  color: rgba(23, 23, 23, 0.58);
+  color: rgba(247, 247, 242, 0.58);
   font-size: clamp(15px, 1.12vw, 18px);
   line-height: 1.55;
 }
 
+.process-step:hover {
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.process-step:hover::before {
+  opacity: 1;
+}
+
 .process-step:hover .process-step__number {
-  color: #ffffff;
-  background: #080808;
-  border-color: #080808;
+  color: #11110f;
+  background: #ffffff;
+  border-color: #ffffff;
 }
 
 @media (max-width: 900px) {
@@ -1559,6 +1658,11 @@ button {
     padding: 70px 18px 96px;
   }
 
+  .process::before {
+    inset: 12px;
+    border-radius: 24px;
+  }
+
   .process__intro h2 {
     font-size: clamp(38px, 12vw, 50px);
     line-height: 1.02;
@@ -1578,7 +1682,7 @@ button {
   .process-step {
     grid-template-columns: 54px minmax(0, 1fr);
     gap: 16px;
-    padding: 26px 0;
+    padding: 26px 18px;
   }
 
   .process-step__number {
