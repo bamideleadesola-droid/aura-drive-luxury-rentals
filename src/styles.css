@@ -960,7 +960,7 @@ button {
 }
 
 .film__intro {
-  max-width: 760px;
+  max-width: 860px;
   margin: 0 auto clamp(38px, 5vw, 64px);
   text-align: center;
 }
@@ -968,9 +968,9 @@ button {
 .film__intro h2 {
   margin: 0;
   color: #080808;
-  font-size: clamp(36px, 4.4vw, 64px);
-  line-height: 1;
-  font-weight: 520;
+  font-size: clamp(34px, 4vw, 58px);
+  line-height: 1.03;
+  font-weight: 500;
   letter-spacing: 0;
 }
 
@@ -1006,14 +1006,14 @@ button {
 .film__video {
   display: block;
   object-fit: cover;
-  filter: saturate(0.94) contrast(1.06);
+  filter: saturate(0.98) contrast(1.04);
 }
 
 .film__wash {
   z-index: 1;
   background:
-    linear-gradient(180deg, rgba(0, 0, 0, 0) 42%, rgba(0, 0, 0, 0.28) 100%),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.24) 0%, rgba(0, 0, 0, 0) 42%);
+    linear-gradient(180deg, rgba(0, 0, 0, 0) 52%, rgba(0, 0, 0, 0.2) 100%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.14) 0%, rgba(0, 0, 0, 0) 42%);
   pointer-events: none;
 }
 

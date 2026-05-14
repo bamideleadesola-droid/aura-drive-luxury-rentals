@@ -564,16 +564,16 @@ function App() {
       >
         <div className="film__inner">
           <div className="film__intro">
-            <h2 id="film-heading">See the handover in motion.</h2>
-            <p>A quiet look at the cars before they arrive.</p>
+            <h2 id="film-heading">Concierge handover, in motion.</h2>
+            <p>From route check to customer care, the ride starts before the door closes.</p>
           </div>
 
           <div className="film__frame">
             <video
               ref={filmVideoRef}
               className="film__video"
-              src="/assets/aura-drive-film.mp4"
-              poster="/assets/bright-coastal-car.png"
+              src="/assets/aura-drive-service.mp4"
+              poster="/assets/aura-drive-service-poster.jpg"
               autoPlay
               muted
               loop
