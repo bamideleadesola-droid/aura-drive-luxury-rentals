@@ -9,7 +9,7 @@ import {
   useScroll,
   useTransform,
 } from "framer-motion";
-import { ArrowRight, BriefcaseBusiness, Gem, Images, Menu, Phone, Plane, Sparkles, Waves, X } from "lucide-react";
+import { ArrowRight, BriefcaseBusiness, Gem, Images, Menu, Pause, Phone, Plane, Play, Sparkles, Waves, X } from "lucide-react";
 
 const arrivalTypes = [
   {
@@ -237,6 +237,8 @@ function FleetShowcaseStack() {
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeArrival, setActiveArrival] = useState<number | null>(null);
+  const [filmPlaying, setFilmPlaying] = useState(false);
+  const filmVideoRef = useRef<HTMLVideoElement>(null);
   const shouldReduceMotion = useReducedMotion();
 
   const ease = [0.22, 1, 0.36, 1] as const;
@@ -270,6 +272,22 @@ function App() {
     event.currentTarget.style.setProperty("--pointer-y", "50%");
     event.currentTarget.style.setProperty("--parallax-x", "0px");
     event.currentTarget.style.setProperty("--parallax-y", "0px");
+  };
+  const toggleFilmPlayback = () => {
+    const video = filmVideoRef.current;
+
+    if (!video) {
+      return;
+    }
+
+    if (video.paused) {
+      void video.play();
+      setFilmPlaying(true);
+      return;
+    }
+
+    video.pause();
+    setFilmPlaying(false);
   };
 
   return (
@@ -534,6 +552,44 @@ function App() {
           <FleetShowcaseStack />
         </div>
       </section>
+
+      <motion.section
+        className="film"
+        id="film"
+        aria-labelledby="film-heading"
+        initial={shouldReduceMotion ? false : { opacity: 0, y: 28 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.72, ease }}
+      >
+        <div className="film__inner">
+          <div className="film__intro">
+            <h2 id="film-heading">See the handover in motion.</h2>
+            <p>A quiet look at the cars before they arrive.</p>
+          </div>
+
+          <div className="film__frame">
+            <video
+              ref={filmVideoRef}
+              className="film__video"
+              src="/assets/aura-drive-film.mp4"
+              poster="/assets/bright-coastal-car.png"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              onPause={() => setFilmPlaying(false)}
+              onPlay={() => setFilmPlaying(true)}
+            />
+            <span className="film__wash" />
+            <button className="film__control" type="button" onClick={toggleFilmPlayback} aria-label={filmPlaying ? "Pause video" : "Play video"}>
+              {filmPlaying ? <Pause aria-hidden="true" size={18} /> : <Play aria-hidden="true" size={18} />}
+              {filmPlaying ? "Pause" : "Play"}
+            </button>
+          </div>
+        </div>
+      </motion.section>
     </main>
   );
 }

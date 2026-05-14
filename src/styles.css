@@ -948,6 +948,109 @@ button {
   transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+.film {
+  padding: clamp(78px, 8vw, 124px) clamp(18px, 4.2vw, 78px) clamp(96px, 10vw, 150px);
+  color: var(--ink);
+  background: #ffffff;
+}
+
+.film__inner {
+  width: min(100%, 1320px);
+  margin: 0 auto;
+}
+
+.film__intro {
+  max-width: 760px;
+  margin: 0 auto clamp(38px, 5vw, 64px);
+  text-align: center;
+}
+
+.film__intro h2 {
+  margin: 0;
+  color: #080808;
+  font-size: clamp(36px, 4.4vw, 64px);
+  line-height: 1;
+  font-weight: 520;
+  letter-spacing: 0;
+}
+
+.film__intro p {
+  margin: 18px auto 0;
+  max-width: 520px;
+  color: rgba(23, 23, 23, 0.62);
+  font-size: clamp(16px, 1.22vw, 19px);
+  line-height: 1.56;
+}
+
+.film__frame {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  aspect-ratio: 16 / 9;
+  border: 1px solid rgba(23, 23, 23, 0.08);
+  border-radius: 26px;
+  background: #101010;
+  box-shadow:
+    0 34px 92px rgba(24, 24, 24, 0.13),
+    0 1px 0 rgba(255, 255, 255, 0.78) inset;
+}
+
+.film__video,
+.film__wash {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.film__video {
+  display: block;
+  object-fit: cover;
+  filter: saturate(0.94) contrast(1.06);
+}
+
+.film__wash {
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0) 42%, rgba(0, 0, 0, 0.28) 100%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.24) 0%, rgba(0, 0, 0, 0) 42%);
+  pointer-events: none;
+}
+
+.film__control {
+  position: absolute;
+  left: clamp(18px, 2.4vw, 32px);
+  bottom: clamp(18px, 2.4vw, 32px);
+  z-index: 2;
+  min-height: 54px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 20px;
+  border: 1px solid rgba(255, 255, 255, 0.54);
+  border-radius: 8px;
+  color: #171717;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.18);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  backdrop-filter: blur(16px);
+  transition:
+    background 220ms ease,
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.film__control:hover {
+  transform: translateY(-2px);
+  background: #ffffff;
+}
+
+.film__control:focus-visible {
+  outline: 3px solid rgba(23, 23, 23, 0.22);
+  outline-offset: 4px;
+}
+
 @media (max-width: 900px) {
   .nav {
     min-height: 82px;
@@ -1084,6 +1187,14 @@ button {
 
   .fleet-showcase__booking {
     width: min(100%, 430px);
+  }
+
+  .film {
+    padding-top: 72px;
+  }
+
+  .film__frame {
+    aspect-ratio: 1.12 / 1;
   }
 }
 
@@ -1280,6 +1391,34 @@ button {
 
   .fleet-showcase__button {
     min-height: 54px;
+  }
+
+  .film {
+    padding: 66px 14px 94px;
+  }
+
+  .film__intro {
+    margin-bottom: 34px;
+  }
+
+  .film__intro h2 {
+    font-size: clamp(34px, 11vw, 46px);
+    line-height: 1.04;
+  }
+
+  .film__intro p {
+    font-size: 15px;
+  }
+
+  .film__frame {
+    border-radius: 22px;
+  }
+
+  .film__control {
+    left: 14px;
+    bottom: 14px;
+    min-height: 48px;
+    padding-inline: 16px;
   }
 }
 
