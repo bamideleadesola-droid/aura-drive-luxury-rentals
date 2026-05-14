@@ -104,6 +104,25 @@ const fleetShowcases = [
   },
 ];
 
+const reservationSteps = [
+  {
+    title: "Choose your car",
+    detail: "Pick a model or ask us to match one to the trip.",
+  },
+  {
+    title: "Share the arrival details",
+    detail: "Pickup time, destination, passengers, and luggage.",
+  },
+  {
+    title: "Confirm the essentials",
+    detail: "Documents, payment, and delivery notes handled once.",
+  },
+  {
+    title: "Meet the car ready",
+    detail: "Clean, fueled, timed, and handed over without the back-and-forth.",
+  },
+];
+
 type FleetShowcase = (typeof fleetShowcases)[number];
 
 type FleetShowcaseCardProps = {
@@ -594,6 +613,76 @@ function App() {
               {filmPlaying ? "Pause reel" : "Play reel"}
             </button>
           </div>
+        </div>
+      </motion.section>
+
+      <motion.section
+        className="process"
+        id="process"
+        aria-labelledby="process-heading"
+        initial={shouldReduceMotion ? false : { opacity: 0, y: 28 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.18 }}
+        transition={{ duration: 0.72, ease }}
+      >
+        <div className="process__inner">
+          <div className="process__intro">
+            <motion.h2
+              id="process-heading"
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.55 }}
+              transition={{ duration: 0.64, ease }}
+            >
+              Reserve without the back-and-forth.
+            </motion.h2>
+            <motion.p
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.55 }}
+              transition={{ duration: 0.64, delay: 0.08, ease }}
+            >
+              Choose the car, tell us where and when, and we handle the handover.
+            </motion.p>
+            <motion.a
+              className="process__cta"
+              href="mailto:hello@auradrive.example?subject=AURA%20DRIVE%20-%20Reserve"
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.55 }}
+              transition={{ duration: 0.56, delay: 0.16, ease }}
+              whileHover={shouldReduceMotion ? undefined : { y: -3, scale: 1.012 }}
+              whileTap={shouldReduceMotion ? undefined : { scale: 0.98 }}
+            >
+              Reserve your car
+              <ArrowRight aria-hidden="true" size={18} />
+            </motion.a>
+          </div>
+
+          <motion.div
+            className="process__steps"
+            aria-label="Reservation process"
+            initial={shouldReduceMotion ? false : "hidden"}
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{ staggerChildren: 0.08 }}
+          >
+            {reservationSteps.map((step, index) => (
+              <motion.div
+                className="process-step"
+                key={step.title}
+                variants={reveal}
+                transition={{ duration: 0.56, ease }}
+                whileHover={shouldReduceMotion ? undefined : { x: 8 }}
+              >
+                <span className="process-step__number">{String(index + 1).padStart(2, "0")}</span>
+                <span className="process-step__content">
+                  <span className="process-step__title">{step.title}</span>
+                  <span className="process-step__detail">{step.detail}</span>
+                </span>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </motion.section>
     </main>
