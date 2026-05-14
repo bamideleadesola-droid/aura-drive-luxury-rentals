@@ -738,7 +738,7 @@ button {
   height: clamp(360px, 44svh, 510px);
   margin-top: clamp(14px, 1.7vw, 22px);
   display: grid;
-  grid-template-columns: minmax(0, 1.42fr) minmax(300px, 0.78fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 10px;
 }
 
