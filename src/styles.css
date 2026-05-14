@@ -1298,8 +1298,8 @@ button {
   max-width: 760px;
   margin: 0;
   color: #080808;
-  font-size: clamp(38px, 4.65vw, 66px);
-  line-height: 0.98;
+  font-size: clamp(34px, 4.2vw, 58px);
+  line-height: 1.08;
   font-weight: 500;
   letter-spacing: 0;
   text-wrap: balance;
@@ -1338,9 +1338,9 @@ button {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: clamp(22px, 2.4vw, 34px);
+  gap: 0;
   min-height: 178px;
-  padding: clamp(22px, 2.6vw, 34px);
+  padding: 0;
   border: 1px solid rgba(23, 23, 23, 0.08);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.78);
@@ -1388,14 +1388,82 @@ button {
   opacity: 0.34;
 }
 
+.testimonial-card__media,
+.testimonial-card__body,
 .testimonial-card__quote-icon,
 .testimonial-card__trip {
   position: relative;
   z-index: 1;
+}
+
+.testimonial-card__media {
+  height: 88px;
+  display: block;
+  overflow: hidden;
+  background: #ececea;
+}
+
+.testimonials__grid .testimonial-card:first-child .testimonial-card__media {
+  height: 104px;
+}
+
+.testimonial-card--featured .testimonial-card__media {
+  height: clamp(160px, 14vw, 200px);
+}
+
+.testimonial-card__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0.24) 100%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.14), rgba(0, 0, 0, 0));
+  pointer-events: none;
+}
+
+.testimonial-card__media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  filter: saturate(0.88) contrast(1.04) brightness(0.9);
+  transform: scale(1.02);
+  transition:
+    transform 620ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 620ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.testimonial-card:hover .testimonial-card__media img {
+  filter: saturate(0.98) contrast(1.06) brightness(0.94);
+  transform: scale(1.07);
+}
+
+.testimonial-card__body {
+  min-height: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: clamp(16px, 1.7vw, 24px);
+  padding: clamp(20px, 2.2vw, 28px);
+}
+
+.testimonial-card--featured .testimonial-card__body {
+  gap: clamp(22px, 2.4vw, 32px);
+  padding: clamp(24px, 2.6vw, 32px);
+}
+
+.testimonial-card__trip {
   width: fit-content;
 }
 
 .testimonial-card__quote-icon {
+  position: absolute;
+  left: clamp(22px, 2.6vw, 34px);
+  bottom: clamp(18px, 2vw, 26px);
+  z-index: 2;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1416,11 +1484,9 @@ button {
 }
 
 .testimonial-card blockquote {
-  position: relative;
-  z-index: 1;
   margin: 0;
   color: #101010;
-  font-size: clamp(19px, 1.65vw, 25px);
+  font-size: clamp(18px, 1.45vw, 22px);
   line-height: 1.2;
   font-weight: 500;
   letter-spacing: 0;
@@ -1429,14 +1495,12 @@ button {
 .testimonial-card--featured blockquote {
   max-width: 660px;
   color: #ffffff;
-  font-size: clamp(28px, 3vw, 42px);
+  font-size: clamp(26px, 2.55vw, 36px);
   line-height: 1.08;
   font-weight: 500;
 }
 
 .testimonial-card footer {
-  position: relative;
-  z-index: 1;
   display: grid;
   gap: 6px;
 }
@@ -1912,8 +1976,8 @@ button {
   }
 
   .testimonials__intro h2 {
-    font-size: clamp(36px, 11vw, 48px);
-    line-height: 1.04;
+    font-size: clamp(34px, 11vw, 46px);
+    line-height: 1.06;
   }
 
   .testimonials__intro p {
@@ -1931,19 +1995,32 @@ button {
 
   .testimonial-card {
     min-height: 224px;
-    padding: 24px;
+    padding: 0;
   }
 
   .testimonial-card--featured {
-    min-height: 410px;
+    min-height: 430px;
+  }
+
+  .testimonial-card__media {
+    height: 96px;
+  }
+
+  .testimonial-card--featured .testimonial-card__media {
+    height: 160px;
+  }
+
+  .testimonial-card__body,
+  .testimonial-card--featured .testimonial-card__body {
+    padding: 24px;
   }
 
   .testimonial-card--featured blockquote {
-    font-size: clamp(29px, 9vw, 40px);
+    font-size: clamp(26px, 8vw, 34px);
   }
 
   .testimonial-card blockquote {
-    font-size: clamp(21px, 6.3vw, 27px);
+    font-size: clamp(20px, 6vw, 25px);
   }
 }
 

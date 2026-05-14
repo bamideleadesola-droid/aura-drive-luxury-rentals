@@ -129,24 +129,32 @@ const testimonials = [
     client: "Private client",
     trip: "Airport arrival",
     vehicle: "Range Rover Autobiography",
+    image: "/assets/arrival-airport.jpg",
+    alt: "Luxury sedan prepared beside a private aircraft for an airport arrival",
   },
   {
     quote: "For a two-day roadshow, the S-Class felt discreet and on time at every stop. The team handled the changes quietly.",
     client: "Executive assistant",
     trip: "Business day",
     vehicle: "Mercedes S-Class",
+    image: "/assets/arrival-business.jpg",
+    alt: "Client entering a black luxury sedan outside a business building",
   },
   {
     quote: "We booked late for a family weekend and it still felt considered. Enough space, clear pricing, and a very easy return.",
     client: "Family trip",
     trip: "Weekend route",
     vehicle: "Range Rover Autobiography",
+    image: "/assets/arrival-coast.jpg",
+    alt: "Luxury car on a coastal road during a weekend route",
   },
   {
     quote: "The Ghost arrived exactly when requested, detailed properly, and the handover took less than five minutes.",
     client: "Event guest",
     trip: "Evening entrance",
     vehicle: "Rolls-Royce Ghost",
+    image: "/assets/arrival-evening.jpg",
+    alt: "Red supercar parked outside a refined evening venue",
   },
 ];
 
@@ -757,16 +765,21 @@ function App() {
               transition={{ duration: 0.62, ease }}
               whileHover={shouldReduceMotion ? undefined : { y: -6 }}
             >
-              <span className="testimonial-card__quote-icon">
-                <Quote aria-hidden="true" size={26} />
-              </span>
-              <blockquote>{testimonials[0].quote}</blockquote>
-              <footer>
-                <span>{testimonials[0].client}</span>
-                <span>
-                  {testimonials[0].trip} / {testimonials[0].vehicle}
+              <span className="testimonial-card__media">
+                <img src={testimonials[0].image} alt={testimonials[0].alt} />
+                <span className="testimonial-card__quote-icon">
+                  <Quote aria-hidden="true" size={26} />
                 </span>
-              </footer>
+              </span>
+              <span className="testimonial-card__body">
+                <blockquote>{testimonials[0].quote}</blockquote>
+                <footer>
+                  <span>{testimonials[0].client}</span>
+                  <span>
+                    {testimonials[0].trip} / {testimonials[0].vehicle}
+                  </span>
+                </footer>
+              </span>
             </motion.article>
 
             <div className="testimonials__grid">
@@ -778,12 +791,17 @@ function App() {
                   transition={{ duration: 0.56, ease }}
                   whileHover={shouldReduceMotion ? undefined : { y: -5 }}
                 >
-                  <span className="testimonial-card__trip">{testimonial.trip}</span>
-                  <blockquote>{testimonial.quote}</blockquote>
-                  <footer>
-                    <span>{testimonial.client}</span>
-                    <span>{testimonial.vehicle}</span>
-                  </footer>
+                  <span className="testimonial-card__media">
+                    <img src={testimonial.image} alt={testimonial.alt} />
+                  </span>
+                  <span className="testimonial-card__body">
+                    <span className="testimonial-card__trip">{testimonial.trip}</span>
+                    <blockquote>{testimonial.quote}</blockquote>
+                    <footer>
+                      <span>{testimonial.client}</span>
+                      <span>{testimonial.vehicle}</span>
+                    </footer>
+                  </span>
                 </motion.article>
               ))}
             </div>
