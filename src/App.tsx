@@ -564,16 +564,16 @@ function App() {
       >
         <div className="film__inner">
           <div className="film__intro">
-            <h2 id="film-heading">Concierge handover, in motion.</h2>
-            <p>From route check to customer care, the ride starts before the door closes.</p>
+            <h2 id="film-heading">From pickup to arrival.</h2>
+            <p>A short look at the road, the handover, and the care around every trip.</p>
           </div>
 
           <div className="film__frame">
             <video
               ref={filmVideoRef}
               className="film__video"
-              src="/assets/aura-drive-service.mp4"
-              poster="/assets/aura-drive-service-poster.jpg"
+              src="/assets/aura-drive-promo.mp4"
+              poster="/assets/aura-drive-promo-poster.jpg"
               autoPlay
               muted
               loop
@@ -589,9 +589,9 @@ function App() {
               onPlay={() => setFilmPlaying(true)}
             />
             <span className="film__wash" />
-            <button className="film__control" type="button" onClick={toggleFilmPlayback} aria-label={filmPlaying ? "Pause video" : "Play video"}>
+            <button className="film__control" type="button" onClick={toggleFilmPlayback} aria-label={filmPlaying ? "Pause reel" : "Play reel"}>
               {filmPlaying ? <Pause aria-hidden="true" size={18} /> : <Play aria-hidden="true" size={18} />}
-              {filmPlaying ? "Pause" : "Play"}
+              {filmPlaying ? "Pause reel" : "Play reel"}
             </button>
           </div>
         </div>
