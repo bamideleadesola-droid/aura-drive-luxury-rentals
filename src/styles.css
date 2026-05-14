@@ -688,16 +688,16 @@ button {
 
 .fleet-stage {
   position: sticky;
-  top: 56px;
-  height: min(980px, calc(100svh + 160px));
-  min-height: 780px;
+  top: 36px;
+  height: min(860px, calc(100svh - 52px));
+  min-height: 710px;
 }
 
 .fleet-showcase {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  padding: clamp(22px, 3vw, 36px);
+  padding: clamp(20px, 2.4vw, 32px);
   border: 1px solid rgba(23, 23, 23, 0.08);
   border-radius: 26px;
   background: #ffffff;
@@ -735,10 +735,10 @@ button {
 }
 
 .fleet-showcase__gallery {
-  height: clamp(420px, 55svh, 620px);
-  margin-top: clamp(16px, 2vw, 26px);
+  height: clamp(360px, 44svh, 510px);
+  margin-top: clamp(14px, 1.7vw, 22px);
   display: grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.75fr);
+  grid-template-columns: minmax(0, 1.42fr) minmax(300px, 0.78fr);
   gap: 10px;
 }
 
@@ -842,10 +842,10 @@ button {
 }
 
 .fleet-showcase__details {
-  padding-top: clamp(22px, 2.9vw, 38px);
+  padding-top: clamp(20px, 2.25vw, 30px);
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(280px, 380px);
-  gap: clamp(24px, 4vw, 66px);
+  gap: clamp(24px, 3.6vw, 58px);
   align-items: end;
 }
 
@@ -866,7 +866,7 @@ button {
 .fleet-showcase h3 {
   margin: 0;
   color: #080808;
-  font-size: clamp(36px, 4vw, 56px);
+  font-size: clamp(34px, 3.7vw, 52px);
   line-height: 0.98;
   font-weight: 520;
   letter-spacing: 0;
@@ -874,16 +874,16 @@ button {
 
 .fleet-showcase__copy p {
   max-width: 600px;
-  margin: 16px 0 0;
+  margin: 14px 0 0;
   color: rgba(23, 23, 23, 0.68);
   font-size: clamp(16px, 1.28vw, 19px);
-  line-height: 1.72;
+  line-height: 1.62;
 }
 
 .fleet-showcase__booking {
   display: grid;
-  gap: 18px;
-  padding: 24px;
+  gap: 14px;
+  padding: 20px;
   border: 1px solid rgba(23, 23, 23, 0.08);
   border-radius: 8px;
   color: #171717;
@@ -919,7 +919,7 @@ button {
 }
 
 .fleet-showcase__button {
-  min-height: 58px;
+  min-height: 54px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
