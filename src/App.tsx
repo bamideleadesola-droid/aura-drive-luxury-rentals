@@ -579,6 +579,12 @@ function App() {
               loop
               playsInline
               preload="metadata"
+              onLoadedData={(event) => {
+                const video = event.currentTarget;
+                if (video.paused) {
+                  void video.play().then(() => setFilmPlaying(true)).catch(() => setFilmPlaying(false));
+                }
+              }}
               onPause={() => setFilmPlaying(false)}
               onPlay={() => setFilmPlaying(true)}
             />
