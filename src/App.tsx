@@ -9,7 +9,7 @@ import {
   useScroll,
   useTransform,
 } from "framer-motion";
-import { ArrowRight, BriefcaseBusiness, Gem, Images, Menu, Pause, Phone, Plane, Play, Quote, Sparkles, Waves, X } from "lucide-react";
+import { ArrowRight, BriefcaseBusiness, Gem, Images, Menu, Pause, Phone, Plane, Play, Plus, Quote, Sparkles, Waves, X } from "lucide-react";
 
 const arrivalTypes = [
   {
@@ -181,6 +181,33 @@ const closingSignals = [
   },
 ];
 
+const faqItems = [
+  {
+    question: "How early should I reserve?",
+    answer: "For airport arrivals and weekends, a few days ahead is best. Same-day requests are possible when a car is available.",
+  },
+  {
+    question: "Can the car be delivered to me?",
+    answer: "Yes. We can arrange delivery to an airport, hotel, residence, office, or private venue depending on timing and access.",
+  },
+  {
+    question: "What do I need to confirm a booking?",
+    answer: "We confirm the car, dates, delivery location, valid driving details, payment, and any handover notes before the trip.",
+  },
+  {
+    question: "What if my flight or schedule changes?",
+    answer: "Share the update with the concierge team. We adjust the handover timing where possible and keep the process calm.",
+  },
+  {
+    question: "Can I request a chauffeur?",
+    answer: "Yes. Tell us the route, timing, and service style you prefer, and we will confirm the right car and driver arrangement.",
+  },
+  {
+    question: "Are fees clear before pickup?",
+    answer: "Yes. Pricing, delivery notes, deposit, coverage, and any extras are confirmed before the car is prepared.",
+  },
+];
+
 type FleetShowcase = (typeof fleetShowcases)[number];
 
 type FleetShowcaseCardProps = {
@@ -314,6 +341,7 @@ function FleetShowcaseStack() {
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeArrival, setActiveArrival] = useState<number | null>(null);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [filmPlaying, setFilmPlaying] = useState(false);
   const filmVideoRef = useRef<HTMLVideoElement>(null);
   const shouldReduceMotion = useReducedMotion();
@@ -828,6 +856,88 @@ function App() {
                 </motion.article>
               ))}
             </div>
+          </motion.div>
+        </div>
+      </motion.section>
+
+      <motion.section
+        className="faq"
+        id="faq"
+        aria-labelledby="faq-heading"
+        initial={shouldReduceMotion ? false : { opacity: 0, y: 28 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.18 }}
+        transition={{ duration: 0.72, ease }}
+      >
+        <div className="faq__inner">
+          <div className="faq__intro">
+            <motion.h2
+              id="faq-heading"
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.6 }}
+              transition={{ duration: 0.64, ease }}
+            >
+              Questions before you reserve.
+            </motion.h2>
+            <motion.p
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.6 }}
+              transition={{ duration: 0.64, delay: 0.08, ease }}
+            >
+              Clear answers for delivery, timing, documents, and concierge requests.
+            </motion.p>
+          </div>
+
+          <motion.div
+            className="faq__list"
+            initial={shouldReduceMotion ? false : "hidden"}
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.18 }}
+            transition={{ staggerChildren: 0.06 }}
+          >
+            {faqItems.map((item, index) => {
+              const isOpen = openFaq === index;
+              const answerId = `faq-answer-${index}`;
+
+              return (
+                <motion.div
+                  className={`faq-item ${isOpen ? "faq-item--open" : ""}`}
+                  key={item.question}
+                  variants={reveal}
+                  transition={{ duration: 0.5, ease }}
+                >
+                  <button
+                    className="faq-item__button"
+                    type="button"
+                    aria-expanded={isOpen}
+                    aria-controls={answerId}
+                    onClick={() => setOpenFaq((current) => (current === index ? null : index))}
+                  >
+                    <span>{item.question}</span>
+                    <span className="faq-item__icon" aria-hidden="true">
+                      <Plus size={20} />
+                    </span>
+                  </button>
+
+                  <AnimatePresence initial={false}>
+                    {isOpen ? (
+                      <motion.div
+                        className="faq-item__answer"
+                        id={answerId}
+                        initial={shouldReduceMotion ? false : { height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={shouldReduceMotion ? { opacity: 0 } : { height: 0, opacity: 0 }}
+                        transition={{ duration: 0.24, ease }}
+                      >
+                        <p>{item.answer}</p>
+                      </motion.div>
+                    ) : null}
+                  </AnimatePresence>
+                </motion.div>
+              );
+            })}
           </motion.div>
         </div>
       </motion.section>
