@@ -445,7 +445,7 @@ function App() {
           <motion.a href="mailto:hello@auradrive.example?subject=AURA%20DRIVE%20-%20Rental%20terms" whileHover={{ y: -1 }}>
             Terms
           </motion.a>
-          <motion.a href="#arrivals" whileHover={{ y: -1 }}>
+          <motion.a href="#request" whileHover={{ y: -1 }}>
             Concierge
           </motion.a>
           <motion.a href="mailto:hello@auradrive.example" whileHover={{ y: -1 }}>
@@ -500,7 +500,7 @@ function App() {
               <a href="mailto:hello@auradrive.example?subject=AURA%20DRIVE%20-%20Rental%20terms" onClick={() => setMenuOpen(false)}>
                 Terms
               </a>
-              <a href="#arrivals" onClick={() => setMenuOpen(false)}>
+              <a href="#request" onClick={() => setMenuOpen(false)}>
                 Concierge
               </a>
               <a href="mailto:hello@auradrive.example" onClick={() => setMenuOpen(false)}>
@@ -547,15 +547,156 @@ function App() {
           <motion.div className="hero__actions" aria-label="Hero actions" variants={reveal} transition={{ duration: 0.6, ease }}>
             <motion.a
               className="button button--primary"
-              href="#fleet"
+              href="#request"
               whileHover={shouldReduceMotion ? undefined : { y: -3, scale: 1.015 }}
               whileTap={shouldReduceMotion ? undefined : { scale: 0.98 }}
             >
-              Choose your car
+              Request availability
               <ArrowRight aria-hidden="true" size={18} />
             </motion.a>
           </motion.div>
         </motion.div>
+      </motion.section>
+
+      <motion.section
+        className="request"
+        id="request"
+        aria-labelledby="request-heading"
+        initial={shouldReduceMotion ? false : { opacity: 0, y: 28 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.18 }}
+        transition={{ duration: 0.72, ease }}
+      >
+        <div className="request__inner">
+          <motion.div
+            className="request__copy"
+            initial={shouldReduceMotion ? false : "hidden"}
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.45 }}
+            transition={{ staggerChildren: 0.08 }}
+          >
+            <motion.h2 id="request-heading" variants={reveal} transition={{ duration: 0.64, ease }}>
+              Tell us the arrival.
+            </motion.h2>
+            <motion.p variants={reveal} transition={{ duration: 0.64, ease }}>
+              Share the timing, location, and car preference. We will confirm availability and handover details.
+            </motion.p>
+
+            <motion.div className="request__notes" aria-label="Request support details" variants={reveal} transition={{ duration: 0.56, ease }}>
+              <span className="request__note">
+                <Plane aria-hidden="true" size={19} />
+                <span>
+                  <strong>Airport, hotel, or residence</strong>
+                  <span>We plan the handover around the real pickup point.</span>
+                </span>
+              </span>
+              <span className="request__note">
+                <Gem aria-hidden="true" size={19} />
+                <span>
+                  <strong>Matched vehicle recommendation</strong>
+                  <span>Tell us the trip style and we can suggest the best fit.</span>
+                </span>
+              </span>
+              <span className="request__note">
+                <Phone aria-hidden="true" size={19} />
+                <span>
+                  <strong>Concierge confirmation</strong>
+                  <span>A real person confirms timing, delivery, and pricing.</span>
+                </span>
+              </span>
+            </motion.div>
+          </motion.div>
+
+          <motion.form
+            className="request-form"
+            action="mailto:hello@auradrive.example?subject=AURA%20DRIVE%20-%20Availability%20request"
+            method="post"
+            encType="text/plain"
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 24, scale: 0.985 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.32 }}
+            transition={{ duration: 0.64, delay: 0.08, ease }}
+          >
+            <div className="request-form__header">
+              <h3>Request availability</h3>
+              <p>We reply with the car, rate, and handover window.</p>
+            </div>
+
+            <div className="request-form__grid">
+              <label className="request-field request-field--full">
+                <span>Pickup location</span>
+                <input name="Pickup location" placeholder="Airport, hotel, residence, or office" required />
+              </label>
+
+              <label className="request-field">
+                <span>Date</span>
+                <input name="Pickup date" type="date" required />
+              </label>
+
+              <label className="request-field">
+                <span>Time</span>
+                <input name="Pickup time" type="time" required />
+              </label>
+
+              <label className="request-field request-field--full">
+                <span>Vehicle preference</span>
+                <select name="Vehicle preference" value={selectedVehicle} onChange={(event) => setSelectedVehicle(event.currentTarget.value)}>
+                  {fleetShowcases.map((vehicle) => (
+                    <option key={vehicle.name} value={vehicle.name}>
+                      {vehicle.name}
+                    </option>
+                  ))}
+                  <option value="Recommend the best fit">Recommend the best fit</option>
+                </select>
+              </label>
+
+              <fieldset className="request-types">
+                <legend>Trip style</legend>
+                <input type="hidden" name="Trip style" value={selectedRequestType} />
+                <div className="request-types__grid">
+                  {requestTypes.map((type) => {
+                    const RequestIcon = type.icon;
+                    const isSelected = selectedRequestType === type.label;
+
+                    return (
+                      <button
+                        className={`request-type ${isSelected ? "request-type--active" : ""}`}
+                        type="button"
+                        key={type.label}
+                        aria-pressed={isSelected}
+                        onClick={() => setSelectedRequestType(type.label)}
+                      >
+                        <RequestIcon aria-hidden="true" size={18} />
+                        <span>
+                          <strong>{type.label}</strong>
+                          <span>{type.detail}</span>
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </fieldset>
+
+              <label className="request-field">
+                <span>Name</span>
+                <input name="Name" placeholder="Your name" required />
+              </label>
+
+              <label className="request-field">
+                <span>Phone or email</span>
+                <input name="Contact" placeholder="Where should we reply?" required />
+              </label>
+            </div>
+
+            <div className="request-form__footer">
+              <button className="request-form__submit" type="submit">
+                Request availability
+                <ArrowRight aria-hidden="true" size={18} />
+              </button>
+              <span>Same-day requests depend on availability.</span>
+            </div>
+          </motion.form>
+        </div>
       </motion.section>
 
       <motion.section
@@ -970,147 +1111,6 @@ function App() {
               );
             })}
           </motion.div>
-        </div>
-      </motion.section>
-
-      <motion.section
-        className="request"
-        id="request"
-        aria-labelledby="request-heading"
-        initial={shouldReduceMotion ? false : { opacity: 0, y: 28 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.18 }}
-        transition={{ duration: 0.72, ease }}
-      >
-        <div className="request__inner">
-          <motion.div
-            className="request__copy"
-            initial={shouldReduceMotion ? false : "hidden"}
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.45 }}
-            transition={{ staggerChildren: 0.08 }}
-          >
-            <motion.h2 id="request-heading" variants={reveal} transition={{ duration: 0.64, ease }}>
-              Tell us the arrival.
-            </motion.h2>
-            <motion.p variants={reveal} transition={{ duration: 0.64, ease }}>
-              Share the timing, location, and car preference. We will confirm availability and handover details.
-            </motion.p>
-
-            <motion.div className="request__notes" aria-label="Request support details" variants={reveal} transition={{ duration: 0.56, ease }}>
-              <span className="request__note">
-                <Plane aria-hidden="true" size={19} />
-                <span>
-                  <strong>Airport, hotel, or residence</strong>
-                  <span>We plan the handover around the real pickup point.</span>
-                </span>
-              </span>
-              <span className="request__note">
-                <Gem aria-hidden="true" size={19} />
-                <span>
-                  <strong>Matched vehicle recommendation</strong>
-                  <span>Tell us the trip style and we can suggest the best fit.</span>
-                </span>
-              </span>
-              <span className="request__note">
-                <Phone aria-hidden="true" size={19} />
-                <span>
-                  <strong>Concierge confirmation</strong>
-                  <span>A real person confirms timing, delivery, and pricing.</span>
-                </span>
-              </span>
-            </motion.div>
-          </motion.div>
-
-          <motion.form
-            className="request-form"
-            action="mailto:hello@auradrive.example?subject=AURA%20DRIVE%20-%20Availability%20request"
-            method="post"
-            encType="text/plain"
-            initial={shouldReduceMotion ? false : { opacity: 0, y: 24, scale: 0.985 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            viewport={{ once: true, amount: 0.32 }}
-            transition={{ duration: 0.64, delay: 0.08, ease }}
-          >
-            <div className="request-form__header">
-              <h3>Request availability</h3>
-              <p>We reply with the car, rate, and handover window.</p>
-            </div>
-
-            <div className="request-form__grid">
-              <label className="request-field request-field--full">
-                <span>Pickup location</span>
-                <input name="Pickup location" placeholder="Airport, hotel, residence, or office" required />
-              </label>
-
-              <label className="request-field">
-                <span>Date</span>
-                <input name="Pickup date" type="date" required />
-              </label>
-
-              <label className="request-field">
-                <span>Time</span>
-                <input name="Pickup time" type="time" required />
-              </label>
-
-              <label className="request-field request-field--full">
-                <span>Vehicle preference</span>
-                <select name="Vehicle preference" value={selectedVehicle} onChange={(event) => setSelectedVehicle(event.currentTarget.value)}>
-                  {fleetShowcases.map((vehicle) => (
-                    <option key={vehicle.name} value={vehicle.name}>
-                      {vehicle.name}
-                    </option>
-                  ))}
-                  <option value="Recommend the best fit">Recommend the best fit</option>
-                </select>
-              </label>
-
-              <fieldset className="request-types">
-                <legend>Trip style</legend>
-                <input type="hidden" name="Trip style" value={selectedRequestType} />
-                <div className="request-types__grid">
-                  {requestTypes.map((type) => {
-                    const RequestIcon = type.icon;
-                    const isSelected = selectedRequestType === type.label;
-
-                    return (
-                      <button
-                        className={`request-type ${isSelected ? "request-type--active" : ""}`}
-                        type="button"
-                        key={type.label}
-                        aria-pressed={isSelected}
-                        onClick={() => setSelectedRequestType(type.label)}
-                      >
-                        <RequestIcon aria-hidden="true" size={18} />
-                        <span>
-                          <strong>{type.label}</strong>
-                          <span>{type.detail}</span>
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </fieldset>
-
-              <label className="request-field">
-                <span>Name</span>
-                <input name="Name" placeholder="Your name" required />
-              </label>
-
-              <label className="request-field">
-                <span>Phone or email</span>
-                <input name="Contact" placeholder="Where should we reply?" required />
-              </label>
-            </div>
-
-            <div className="request-form__footer">
-              <button className="request-form__submit" type="submit">
-                Request availability
-                <ArrowRight aria-hidden="true" size={18} />
-              </button>
-              <span>Same-day requests depend on availability.</span>
-            </div>
-          </motion.form>
         </div>
       </motion.section>
 
