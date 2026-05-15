@@ -554,9 +554,15 @@ const contactMethods = [
   {
     title: "Concierge",
     value: "Request availability",
-    href: "/#request",
+    href: "/book",
     detail: "Best when you want us to match the car to the trip.",
   },
+];
+
+const bookingAssurances = [
+  "Availability checked before preparation",
+  "Delivery notes confirmed with concierge",
+  "Rate and deposit shared before handover",
 ];
 
 type FleetShowcase = (typeof fleetShowcases)[number];
@@ -600,7 +606,7 @@ function FleetShowcaseCard({ active, index, onReserve, progress, vehicle }: Flee
       <div className="fleet-showcase__gallery" aria-label={`${vehicle.name} image gallery`}>
         <motion.a
           className="fleet-showcase__main"
-          href="#request"
+          href="/book"
           aria-label={`Reserve ${vehicle.name}`}
           onClick={() => onReserve(vehicle.name)}
           whileHover={shouldReduceMotion ? undefined : { y: -4 }}
@@ -619,7 +625,7 @@ function FleetShowcaseCard({ active, index, onReserve, progress, vehicle }: Flee
           {vehicle.gallery.map((image) => (
             <motion.a
               className="fleet-showcase__thumb"
-              href="#request"
+              href="/book"
               key={image.src}
               aria-label={`Reserve ${vehicle.name}`}
               onClick={() => onReserve(vehicle.name)}
@@ -642,7 +648,7 @@ function FleetShowcaseCard({ active, index, onReserve, progress, vehicle }: Flee
 
         <motion.a
           className="fleet-showcase__booking"
-          href="#request"
+          href="/book"
           aria-label={`Reserve ${vehicle.name}`}
           onClick={() => onReserve(vehicle.name)}
           whileHover={shouldReduceMotion ? undefined : { y: -4 }}
@@ -750,7 +756,7 @@ function CarsPage() {
 
           <motion.a
             className="cars-page__concierge"
-            href="/#request"
+            href="/concierge"
             initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.56, delay: 0.22, ease }}
@@ -821,7 +827,7 @@ function CarsPage() {
           {filteredVehicles.length > 0 ? (
             filteredVehicles.map((vehicle) => (
               <motion.article className="car-card" key={vehicle.id} variants={reveal} transition={{ duration: 0.52, ease }}>
-                <a className="car-card__media" href="/#request" aria-label={`Request ${vehicle.name}`} onClick={() => rememberVehiclePreference(vehicle.name)}>
+                <a className="car-card__media" href="/book" aria-label={`Request ${vehicle.name}`} onClick={() => rememberVehiclePreference(vehicle.name)}>
                   <img src={vehicle.image} alt={vehicle.alt} />
                   <span className="car-card__wash" />
                   <span className="car-card__chips" aria-hidden="true">
@@ -844,7 +850,7 @@ function CarsPage() {
                     <span className="car-card__price">{vehicle.price}</span>
                   </div>
 
-                  <a className="car-card__request" href="/#request" onClick={() => rememberVehiclePreference(vehicle.name)}>
+                  <a className="car-card__request" href="/book" onClick={() => rememberVehiclePreference(vehicle.name)}>
                     Reserve this car
                     <ArrowRight aria-hidden="true" size={17} />
                   </a>
@@ -877,7 +883,7 @@ function CarsPage() {
 
         <motion.a
           className="cars-page__closing-button"
-          href="/#request"
+          href="/book"
           whileHover={shouldReduceMotion ? undefined : { y: -3, scale: 1.012 }}
           whileTap={shouldReduceMotion ? undefined : { scale: 0.98 }}
         >
@@ -917,7 +923,7 @@ function ConciergePage() {
               Tell us the route, timing, passengers, and tone of the arrival. We prepare the right car and keep the handover calm.
             </motion.p>
             <motion.div className="info-hero__actions" variants={reveal} transition={{ duration: 0.56, ease }}>
-              <a className="info-button info-button--primary" href="/#request">
+              <a className="info-button info-button--primary" href="/book">
                 Request availability
                 <ArrowRight aria-hidden="true" size={17} />
               </a>
@@ -1039,7 +1045,7 @@ function TermsPage() {
             <h2>Need a confirmed quote?</h2>
             <p>Send the dates, pickup point, driver details, and car preference. We will return the exact rate and handover notes.</p>
           </div>
-          <a className="info-button info-button--primary" href="/#request">
+          <a className="info-button info-button--primary" href="/book">
             Request availability
             <ArrowRight aria-hidden="true" size={17} />
           </a>
@@ -1127,6 +1133,193 @@ function ContactPage() {
   );
 }
 
+function BookPage() {
+  const [selectedVehicle, setSelectedVehicle] = useState(getInitialVehiclePreference);
+  const [selectedTripStyle, setSelectedTripStyle] = useState(requestTypes[0].label);
+  const shouldReduceMotion = useReducedMotion();
+  const ease = [0.22, 1, 0.36, 1] as const;
+  const reveal = {
+    hidden: { opacity: 0, y: 22 },
+    visible: { opacity: 1, y: 0 },
+  };
+  const selectedVehicleDetails = carsPageVehicles.find((vehicle) => vehicle.name === selectedVehicle);
+  const summaryVehicle = selectedVehicleDetails ?? carsPageVehicles[0];
+  const summaryName = selectedVehicleDetails ? summaryVehicle.name : "Concierge match";
+  const summaryCategory = selectedVehicleDetails ? summaryVehicle.category : "Prepared recommendation";
+  const summaryPrice = selectedVehicleDetails ? summaryVehicle.price : "Rate confirmed by concierge";
+
+  const updateVehiclePreference = (vehicleName: string) => {
+    setSelectedVehicle(vehicleName);
+
+    if (vehicleName !== "Recommend the best fit") {
+      rememberVehiclePreference(vehicleName);
+    }
+  };
+
+  return (
+    <motion.section
+      className="info-page book-page"
+      id="book-page"
+      aria-labelledby="book-heading"
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.78, ease }}
+    >
+      <div className="info-page__inner">
+        <div className="info-hero book-hero">
+          <motion.div initial={shouldReduceMotion ? false : "hidden"} animate="visible" transition={{ staggerChildren: 0.08, delayChildren: 0.08 }}>
+            <motion.h1 id="book-heading" variants={reveal} transition={{ duration: 0.68, ease }}>
+              Book now
+            </motion.h1>
+            <motion.p variants={reveal} transition={{ duration: 0.62, ease }}>
+              Share the car, timing, and handover location. Concierge will confirm availability and prepare the next step.
+            </motion.p>
+          </motion.div>
+        </div>
+
+        <div className="booking-layout">
+          <motion.form
+            className="booking-form"
+            action="mailto:hello@auradrive.example?subject=AURA%20DRIVE%20-%20Book%20now"
+            method="post"
+            encType="text/plain"
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 24, scale: 0.985 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.64, delay: 0.12, ease }}
+          >
+            <div className="booking-form__header">
+              <h2>Trip request</h2>
+              <p>Keep it simple. We will reply with the confirmed car, rate, and delivery plan.</p>
+            </div>
+
+            <fieldset className="booking-types">
+              <legend>Trip style</legend>
+              <div className="booking-types__grid">
+                {requestTypes.map((type) => {
+                  const RequestIcon = type.icon;
+                  const isActive = selectedTripStyle === type.label;
+
+                  return (
+                    <button
+                      className={`booking-type ${isActive ? "booking-type--active" : ""}`}
+                      type="button"
+                      key={type.label}
+                      aria-pressed={isActive}
+                      onClick={() => setSelectedTripStyle(type.label)}
+                    >
+                      <RequestIcon aria-hidden="true" size={17} />
+                      <span>{type.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              <input type="hidden" name="Trip style" value={selectedTripStyle} />
+            </fieldset>
+
+            <div className="booking-form__grid">
+              <label className="booking-field booking-field--full">
+                <span>Vehicle preference</span>
+                <select name="Vehicle preference" value={selectedVehicle} onChange={(event) => updateVehiclePreference(event.currentTarget.value)}>
+                  <option value="Recommend the best fit">Recommend the best fit</option>
+                  {vehicleRequestOptions.map((vehicleName) => (
+                    <option key={vehicleName} value={vehicleName}>
+                      {vehicleName}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="booking-field">
+                <span>Pickup date</span>
+                <input name="Pickup date" type="date" required />
+              </label>
+
+              <label className="booking-field">
+                <span>Pickup time</span>
+                <input name="Pickup time" type="time" required />
+              </label>
+
+              <label className="booking-field">
+                <span>Return date</span>
+                <input name="Return date" type="date" />
+              </label>
+
+              <label className="booking-field">
+                <span>Passengers</span>
+                <input name="Passengers" inputMode="numeric" placeholder="2" />
+              </label>
+
+              <label className="booking-field booking-field--full">
+                <span>Pickup location</span>
+                <input name="Pickup location" placeholder="Airport, hotel, residence, office..." required />
+              </label>
+
+              <label className="booking-field booking-field--full">
+                <span>Drop-off location</span>
+                <input name="Drop-off location" placeholder="Same as pickup, or tell us the destination" />
+              </label>
+
+              <label className="booking-field">
+                <span>Name</span>
+                <input name="Name" placeholder="Your name" required />
+              </label>
+
+              <label className="booking-field">
+                <span>Phone or email</span>
+                <input name="Contact" placeholder="Where should we reply?" required />
+              </label>
+
+              <label className="booking-field booking-field--full">
+                <span>Notes</span>
+                <textarea name="Notes" placeholder="Flight number, luggage, child seat, chauffeur request, or timing details." rows={4} />
+              </label>
+            </div>
+
+            <motion.button
+              className="booking-submit"
+              type="submit"
+              whileHover={shouldReduceMotion ? undefined : { y: -2, scale: 1.006 }}
+              whileTap={shouldReduceMotion ? undefined : { scale: 0.985 }}
+            >
+              Send booking request
+              <ArrowRight aria-hidden="true" size={17} />
+            </motion.button>
+          </motion.form>
+
+          <motion.aside
+            className="booking-summary"
+            aria-label="Selected booking summary"
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 24, scale: 0.985 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.66, delay: 0.2, ease }}
+          >
+            <div className="booking-summary__media">
+              <img src={summaryVehicle.image} alt={summaryVehicle.alt} />
+            </div>
+
+            <div className="booking-summary__body">
+              <span>{summaryCategory}</span>
+              <h2>{summaryName}</h2>
+              <p>{summaryPrice}</p>
+            </div>
+
+            <div className="booking-summary__chips" aria-label="Booking details">
+              <span>{summaryVehicle.seats}</span>
+              <span>{summaryVehicle.ideal}</span>
+            </div>
+
+            <div className="booking-summary__notes">
+              {bookingAssurances.map((assurance) => (
+                <span key={assurance}>{assurance}</span>
+              ))}
+            </div>
+          </motion.aside>
+        </div>
+      </div>
+    </motion.section>
+  );
+}
+
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeArrival, setActiveArrival] = useState<number | null>(null);
@@ -1142,10 +1335,12 @@ function App() {
   const isConciergePage = currentPath === "/concierge";
   const isTermsPage = currentPath === "/terms";
   const isContactPage = currentPath === "/contact";
+  const isBookPage = currentPath === "/book";
   const carsHref = isCarsPage ? "#cars-list" : "/cars";
   const conciergeHref = isConciergePage ? "#concierge-page" : "/concierge";
   const termsHref = isTermsPage ? "#terms-page" : "/terms";
   const contactHref = isContactPage ? "#contact-page" : "/contact";
+  const bookHref = isBookPage ? "#book-page" : "/book";
   const requestHref = isHomePage ? "#request" : "/#request";
   const arrivalsHref = isHomePage ? "#arrivals" : "/#arrivals";
   const filmHref = isHomePage ? "#film" : "/#film";
@@ -1245,7 +1440,7 @@ function App() {
           </motion.a>
           <motion.a
             className="nav__cta"
-            href={requestHref}
+            href={bookHref}
             whileHover={shouldReduceMotion ? undefined : { y: -2, scale: 1.015 }}
             whileTap={shouldReduceMotion ? undefined : { scale: 0.98 }}
           >
@@ -1286,6 +1481,9 @@ function App() {
               <a href={contactHref} onClick={() => setMenuOpen(false)}>
                 Contact
               </a>
+              <a href={bookHref} onClick={() => setMenuOpen(false)}>
+                Book now
+              </a>
             </motion.nav>
           ) : null}
         </AnimatePresence>
@@ -1299,6 +1497,8 @@ function App() {
         <TermsPage />
       ) : isContactPage ? (
         <ContactPage />
+      ) : isBookPage ? (
+        <BookPage />
       ) : (
         <>
       <motion.section
@@ -1930,7 +2130,7 @@ function App() {
             <motion.div className="closing-cta__actions" variants={reveal} transition={{ duration: 0.56, ease }}>
               <motion.a
                 className="closing-cta__button closing-cta__button--primary"
-                href="#request"
+                href={bookHref}
                 whileHover={shouldReduceMotion ? undefined : { y: -3, scale: 1.012 }}
                 whileTap={shouldReduceMotion ? undefined : { scale: 0.98 }}
               >
@@ -1983,8 +2183,8 @@ function App() {
             <a className="site-footer__brand" href="/" aria-label="AURA DRIVE home">
               AURA DRIVE
             </a>
-            <a className="site-footer__cta" href={requestHref}>
-              Request availability
+            <a className="site-footer__cta" href={bookHref}>
+              Book now
               <ArrowRight aria-hidden="true" size={17} />
             </a>
           </div>
@@ -2003,6 +2203,7 @@ function App() {
 
             <nav className="site-footer__nav" aria-label="Footer service links">
               <span>Service</span>
+              <a href={bookHref}>Book now</a>
               <a href={requestHref}>Request</a>
               <a href={conciergeHref}>Concierge</a>
               <a href={termsHref}>Terms</a>
