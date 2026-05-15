@@ -181,6 +181,29 @@ const closingSignals = [
   },
 ];
 
+const requestTypes = [
+  {
+    label: "Airport",
+    detail: "Flight timing, luggage, and terminal pickup.",
+    icon: Plane,
+  },
+  {
+    label: "Business",
+    detail: "Meetings, waiting time, and discreet routes.",
+    icon: BriefcaseBusiness,
+  },
+  {
+    label: "Weekend",
+    detail: "Family plans, coast drives, and extra room.",
+    icon: Waves,
+  },
+  {
+    label: "Chauffeur",
+    detail: "Driver-led transfers and private arrivals.",
+    icon: Phone,
+  },
+];
+
 const faqItems = [
   {
     question: "How early should I reserve?",
@@ -213,11 +236,12 @@ type FleetShowcase = (typeof fleetShowcases)[number];
 type FleetShowcaseCardProps = {
   active: boolean;
   index: number;
+  onReserve: (vehicleName: string) => void;
   progress: MotionValue<number>;
   vehicle: FleetShowcase;
 };
 
-function FleetShowcaseCard({ active, index, progress, vehicle }: FleetShowcaseCardProps) {
+function FleetShowcaseCard({ active, index, onReserve, progress, vehicle }: FleetShowcaseCardProps) {
   const shouldReduceMotion = useReducedMotion();
   const total = fleetShowcases.length;
   const segment = 1 / total;
@@ -248,8 +272,9 @@ function FleetShowcaseCard({ active, index, progress, vehicle }: FleetShowcaseCa
       <div className="fleet-showcase__gallery" aria-label={`${vehicle.name} image gallery`}>
         <motion.a
           className="fleet-showcase__main"
-          href={`mailto:hello@auradrive.example?subject=${encodeURIComponent(`AURA DRIVE - Reserve ${vehicle.name}`)}`}
+          href="#request"
           aria-label={`Reserve ${vehicle.name}`}
+          onClick={() => onReserve(vehicle.name)}
           whileHover={shouldReduceMotion ? undefined : { y: -4 }}
           whileTap={shouldReduceMotion ? undefined : { scale: 0.996 }}
           transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
@@ -266,9 +291,10 @@ function FleetShowcaseCard({ active, index, progress, vehicle }: FleetShowcaseCa
           {vehicle.gallery.map((image) => (
             <motion.a
               className="fleet-showcase__thumb"
-              href={`mailto:hello@auradrive.example?subject=${encodeURIComponent(`AURA DRIVE - Reserve ${vehicle.name}`)}`}
+              href="#request"
               key={image.src}
               aria-label={`Reserve ${vehicle.name}`}
+              onClick={() => onReserve(vehicle.name)}
               whileHover={shouldReduceMotion ? undefined : { y: -3 }}
               whileTap={shouldReduceMotion ? undefined : { scale: 0.996 }}
               transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
@@ -288,8 +314,9 @@ function FleetShowcaseCard({ active, index, progress, vehicle }: FleetShowcaseCa
 
         <motion.a
           className="fleet-showcase__booking"
-          href={`mailto:hello@auradrive.example?subject=${encodeURIComponent(`AURA DRIVE - Reserve ${vehicle.name}`)}`}
+          href="#request"
           aria-label={`Reserve ${vehicle.name}`}
+          onClick={() => onReserve(vehicle.name)}
           whileHover={shouldReduceMotion ? undefined : { y: -4 }}
           whileTap={shouldReduceMotion ? undefined : { scale: 0.996 }}
           transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
@@ -308,7 +335,7 @@ function FleetShowcaseCard({ active, index, progress, vehicle }: FleetShowcaseCa
   );
 }
 
-function FleetShowcaseStack() {
+function FleetShowcaseStack({ onReserve }: { onReserve: (vehicleName: string) => void }) {
   const stackRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const { scrollYProgress } = useScroll({
@@ -329,6 +356,7 @@ function FleetShowcaseStack() {
             active={activeIndex === index}
             index={index}
             key={vehicle.name}
+            onReserve={onReserve}
             progress={scrollYProgress}
             vehicle={vehicle}
           />
@@ -342,6 +370,8 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeArrival, setActiveArrival] = useState<number | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [selectedRequestType, setSelectedRequestType] = useState(requestTypes[0].label);
+  const [selectedVehicle, setSelectedVehicle] = useState(fleetShowcases[0].name);
   const [filmPlaying, setFilmPlaying] = useState(false);
   const filmVideoRef = useRef<HTMLVideoElement>(null);
   const shouldReduceMotion = useReducedMotion();
@@ -435,7 +465,7 @@ function App() {
           </motion.a>
           <motion.a
             className="nav__cta"
-            href="mailto:hello@auradrive.example?subject=AURA%20DRIVE%20-%20Reserve"
+            href="#request"
             whileHover={shouldReduceMotion ? undefined : { y: -2, scale: 1.015 }}
             whileTap={shouldReduceMotion ? undefined : { scale: 0.98 }}
           >
@@ -574,9 +604,10 @@ function App() {
                   className={`arrival-card ${activeArrival === index ? "arrival-card--active" : ""} ${
                     activeArrival !== null && activeArrival !== index ? "arrival-card--inactive" : ""
                   }`}
-                  href={`mailto:hello@auradrive.example?subject=${encodeURIComponent(`AURA DRIVE - ${arrival.title}`)}`}
+                  href="#request"
                   key={arrival.title}
                   aria-label={`Request ${arrival.title}`}
+                  onClick={() => setSelectedRequestType(requestTypes[Math.min(index, requestTypes.length - 1)].label)}
                   variants={reveal}
                   onFocus={() => setActiveArrival(index)}
                   onBlur={() => setActiveArrival(null)}
@@ -654,7 +685,7 @@ function App() {
             </motion.p>
           </div>
 
-          <FleetShowcaseStack />
+          <FleetShowcaseStack onReserve={setSelectedVehicle} />
         </div>
       </section>
 
@@ -732,7 +763,7 @@ function App() {
             </motion.p>
             <motion.a
               className="process__cta"
-              href="mailto:hello@auradrive.example?subject=AURA%20DRIVE%20-%20Reserve"
+              href="#request"
               initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.55 }}
@@ -943,6 +974,147 @@ function App() {
       </motion.section>
 
       <motion.section
+        className="request"
+        id="request"
+        aria-labelledby="request-heading"
+        initial={shouldReduceMotion ? false : { opacity: 0, y: 28 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.18 }}
+        transition={{ duration: 0.72, ease }}
+      >
+        <div className="request__inner">
+          <motion.div
+            className="request__copy"
+            initial={shouldReduceMotion ? false : "hidden"}
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.45 }}
+            transition={{ staggerChildren: 0.08 }}
+          >
+            <motion.h2 id="request-heading" variants={reveal} transition={{ duration: 0.64, ease }}>
+              Tell us the arrival.
+            </motion.h2>
+            <motion.p variants={reveal} transition={{ duration: 0.64, ease }}>
+              Share the timing, location, and car preference. We will confirm availability and handover details.
+            </motion.p>
+
+            <motion.div className="request__notes" aria-label="Request support details" variants={reveal} transition={{ duration: 0.56, ease }}>
+              <span className="request__note">
+                <Plane aria-hidden="true" size={19} />
+                <span>
+                  <strong>Airport, hotel, or residence</strong>
+                  <span>We plan the handover around the real pickup point.</span>
+                </span>
+              </span>
+              <span className="request__note">
+                <Gem aria-hidden="true" size={19} />
+                <span>
+                  <strong>Matched vehicle recommendation</strong>
+                  <span>Tell us the trip style and we can suggest the best fit.</span>
+                </span>
+              </span>
+              <span className="request__note">
+                <Phone aria-hidden="true" size={19} />
+                <span>
+                  <strong>Concierge confirmation</strong>
+                  <span>A real person confirms timing, delivery, and pricing.</span>
+                </span>
+              </span>
+            </motion.div>
+          </motion.div>
+
+          <motion.form
+            className="request-form"
+            action="mailto:hello@auradrive.example?subject=AURA%20DRIVE%20-%20Availability%20request"
+            method="post"
+            encType="text/plain"
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 24, scale: 0.985 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.32 }}
+            transition={{ duration: 0.64, delay: 0.08, ease }}
+          >
+            <div className="request-form__header">
+              <h3>Request availability</h3>
+              <p>We reply with the car, rate, and handover window.</p>
+            </div>
+
+            <div className="request-form__grid">
+              <label className="request-field request-field--full">
+                <span>Pickup location</span>
+                <input name="Pickup location" placeholder="Airport, hotel, residence, or office" required />
+              </label>
+
+              <label className="request-field">
+                <span>Date</span>
+                <input name="Pickup date" type="date" required />
+              </label>
+
+              <label className="request-field">
+                <span>Time</span>
+                <input name="Pickup time" type="time" required />
+              </label>
+
+              <label className="request-field request-field--full">
+                <span>Vehicle preference</span>
+                <select name="Vehicle preference" value={selectedVehicle} onChange={(event) => setSelectedVehicle(event.currentTarget.value)}>
+                  {fleetShowcases.map((vehicle) => (
+                    <option key={vehicle.name} value={vehicle.name}>
+                      {vehicle.name}
+                    </option>
+                  ))}
+                  <option value="Recommend the best fit">Recommend the best fit</option>
+                </select>
+              </label>
+
+              <fieldset className="request-types">
+                <legend>Trip style</legend>
+                <input type="hidden" name="Trip style" value={selectedRequestType} />
+                <div className="request-types__grid">
+                  {requestTypes.map((type) => {
+                    const RequestIcon = type.icon;
+                    const isSelected = selectedRequestType === type.label;
+
+                    return (
+                      <button
+                        className={`request-type ${isSelected ? "request-type--active" : ""}`}
+                        type="button"
+                        key={type.label}
+                        aria-pressed={isSelected}
+                        onClick={() => setSelectedRequestType(type.label)}
+                      >
+                        <RequestIcon aria-hidden="true" size={18} />
+                        <span>
+                          <strong>{type.label}</strong>
+                          <span>{type.detail}</span>
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </fieldset>
+
+              <label className="request-field">
+                <span>Name</span>
+                <input name="Name" placeholder="Your name" required />
+              </label>
+
+              <label className="request-field">
+                <span>Phone or email</span>
+                <input name="Contact" placeholder="Where should we reply?" required />
+              </label>
+            </div>
+
+            <div className="request-form__footer">
+              <button className="request-form__submit" type="submit">
+                Request availability
+                <ArrowRight aria-hidden="true" size={18} />
+              </button>
+              <span>Same-day requests depend on availability.</span>
+            </div>
+          </motion.form>
+        </div>
+      </motion.section>
+
+      <motion.section
         className="closing-cta"
         id="book"
         aria-labelledby="closing-heading"
@@ -968,7 +1140,7 @@ function App() {
             <motion.div className="closing-cta__actions" variants={reveal} transition={{ duration: 0.56, ease }}>
               <motion.a
                 className="closing-cta__button closing-cta__button--primary"
-                href="mailto:hello@auradrive.example?subject=AURA%20DRIVE%20-%20Reserve"
+                href="#request"
                 whileHover={shouldReduceMotion ? undefined : { y: -3, scale: 1.012 }}
                 whileTap={shouldReduceMotion ? undefined : { scale: 0.98 }}
               >
