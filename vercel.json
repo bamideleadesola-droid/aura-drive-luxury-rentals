@@ -7,6 +7,30 @@
     {
       "source": "/cars/:path*",
       "destination": "/index.html"
+    },
+    {
+      "source": "/concierge",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/concierge/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/terms",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/terms/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/:path*",
+      "destination": "/index.html"
     }
   ]
 }

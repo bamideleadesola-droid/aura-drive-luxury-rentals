@@ -478,6 +478,87 @@ const faqItems = [
   },
 ];
 
+const conciergeServices = [
+  {
+    title: "Airport arrivals",
+    detail: "Flight-aware timing, terminal pickup, luggage planning, and a calm first mile.",
+    image: "/assets/arrival-airport.jpg",
+    alt: "Black luxury sedan parked beside a private aircraft on a runway",
+    icon: Plane,
+  },
+  {
+    title: "Business routes",
+    detail: "Discreet vehicles for meetings, waiting time, multi-stop schedules, and late changes.",
+    image: "/assets/arrival-business.jpg",
+    alt: "Client stepping into a black luxury sedan outside a modern business building",
+    icon: BriefcaseBusiness,
+  },
+  {
+    title: "Weekend plans",
+    detail: "SUVs, grand tourers, and convertibles matched to luggage, distance, and mood.",
+    image: "/assets/arrival-coast.jpg",
+    alt: "Black Ferrari convertible on a coastal hillside road at golden hour",
+    icon: Waves,
+  },
+  {
+    title: "Private entrances",
+    detail: "Prepared handovers for dinners, hotels, events, and chauffeur-led arrivals.",
+    image: "/assets/arrival-evening.jpg",
+    alt: "Red supercar parked outside a refined hotel entrance",
+    icon: Sparkles,
+  },
+];
+
+const conciergeSteps = ["Share the route", "Confirm the car", "Prepare handover", "Stay supported"];
+
+const termsItems = [
+  {
+    title: "Booking confirmation",
+    body: "Availability, final rate, delivery details, deposit, and handover timing are confirmed before a vehicle is prepared.",
+  },
+  {
+    title: "Driver eligibility",
+    body: "Drivers must provide valid licence details, contact information, and any documents required for the selected vehicle and location.",
+  },
+  {
+    title: "Delivery and return",
+    body: "Delivery can be arranged for airports, hotels, residences, offices, and private venues where access and timing allow.",
+  },
+  {
+    title: "Coverage and responsibility",
+    body: "Coverage, excess, mileage, fuel, tolls, parking, and any additional driver details are confirmed with the booking.",
+  },
+  {
+    title: "Changes and cancellations",
+    body: "Schedule changes are handled by the concierge team where possible. Cancellation terms depend on the vehicle and preparation window.",
+  },
+  {
+    title: "Vehicle condition",
+    body: "Cars are handed over clean, documented, and ready. Return condition, fuel level, and mileage are reviewed at collection.",
+  },
+];
+
+const contactMethods = [
+  {
+    title: "Email",
+    value: "hello@auradrive.example",
+    href: "mailto:hello@auradrive.example",
+    detail: "Best for quotes, documents, and planned bookings.",
+  },
+  {
+    title: "Phone",
+    value: "+1 000 000 0000",
+    href: "tel:+10000000000",
+    detail: "Best for same-day timing and handover updates.",
+  },
+  {
+    title: "Concierge",
+    value: "Request availability",
+    href: "/#request",
+    detail: "Best when you want us to match the car to the trip.",
+  },
+];
+
 type FleetShowcase = (typeof fleetShowcases)[number];
 
 type FleetShowcaseCardProps = {
@@ -809,6 +890,243 @@ function CarsPage() {
   );
 }
 
+function ConciergePage() {
+  const shouldReduceMotion = useReducedMotion();
+  const ease = [0.22, 1, 0.36, 1] as const;
+  const reveal = {
+    hidden: { opacity: 0, y: 22 },
+    visible: { opacity: 1, y: 0 },
+  };
+
+  return (
+    <motion.section
+      className="info-page concierge-page"
+      id="concierge-page"
+      aria-labelledby="concierge-heading"
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.78, ease }}
+    >
+      <div className="info-page__inner">
+        <div className="info-hero info-hero--media">
+          <motion.div initial={shouldReduceMotion ? false : "hidden"} animate="visible" transition={{ staggerChildren: 0.08, delayChildren: 0.08 }}>
+            <motion.h1 id="concierge-heading" variants={reveal} transition={{ duration: 0.68, ease }}>
+              Concierge
+            </motion.h1>
+            <motion.p variants={reveal} transition={{ duration: 0.62, ease }}>
+              Tell us the route, timing, passengers, and tone of the arrival. We prepare the right car and keep the handover calm.
+            </motion.p>
+            <motion.div className="info-hero__actions" variants={reveal} transition={{ duration: 0.56, ease }}>
+              <a className="info-button info-button--primary" href="/#request">
+                Request availability
+                <ArrowRight aria-hidden="true" size={17} />
+              </a>
+              <a className="info-button info-button--secondary" href="/cars">
+                Browse cars
+              </a>
+            </motion.div>
+          </motion.div>
+
+          <motion.div
+            className="info-hero__panel"
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 24, scale: 0.985 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.7, delay: 0.16, ease }}
+          >
+            <img src="/assets/arrival-airport.jpg" alt="Black luxury sedan parked beside a private aircraft on a runway" />
+            <span className="info-hero__wash" />
+            <span className="info-hero__panel-copy">
+              <strong>Airport, hotel, residence, or office.</strong>
+              <span>One request. One handover plan.</span>
+            </span>
+          </motion.div>
+        </div>
+
+        <motion.div
+          className="service-grid"
+          aria-label="Concierge services"
+          initial={shouldReduceMotion ? false : "hidden"}
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.18 }}
+          transition={{ staggerChildren: 0.08 }}
+        >
+          {conciergeServices.map((service) => {
+            const ServiceIcon = service.icon;
+
+            return (
+              <motion.article className="service-card" key={service.title} variants={reveal} transition={{ duration: 0.56, ease }}>
+                <img src={service.image} alt={service.alt} />
+                <span className="service-card__wash" />
+                <span className="service-card__content">
+                  <span className="service-card__icon">
+                    <ServiceIcon aria-hidden="true" size={18} />
+                  </span>
+                  <strong>{service.title}</strong>
+                  <span>{service.detail}</span>
+                </span>
+              </motion.article>
+            );
+          })}
+        </motion.div>
+
+        <section className="info-band" aria-labelledby="concierge-process-heading">
+          <div>
+            <h2 id="concierge-process-heading">How it works.</h2>
+            <p>We keep the process edited: the important details, confirmed once, then handled quietly.</p>
+          </div>
+          <div className="step-rail">
+            {conciergeSteps.map((step, index) => (
+              <span className="step-rail__item" key={step}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <strong>{step}</strong>
+              </span>
+            ))}
+          </div>
+        </section>
+      </div>
+    </motion.section>
+  );
+}
+
+function TermsPage() {
+  const shouldReduceMotion = useReducedMotion();
+  const ease = [0.22, 1, 0.36, 1] as const;
+  const reveal = {
+    hidden: { opacity: 0, y: 22 },
+    visible: { opacity: 1, y: 0 },
+  };
+
+  return (
+    <motion.section
+      className="info-page terms-page"
+      id="terms-page"
+      aria-labelledby="terms-heading"
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.78, ease }}
+    >
+      <div className="info-page__inner info-page__inner--narrow">
+        <div className="info-hero">
+          <motion.div initial={shouldReduceMotion ? false : "hidden"} animate="visible" transition={{ staggerChildren: 0.08, delayChildren: 0.08 }}>
+            <motion.h1 id="terms-heading" variants={reveal} transition={{ duration: 0.68, ease }}>
+              Rental terms
+            </motion.h1>
+            <motion.p variants={reveal} transition={{ duration: 0.62, ease }}>
+              A clear overview of how bookings, handovers, documents, and changes are handled. Final terms are confirmed with each reservation.
+            </motion.p>
+          </motion.div>
+        </div>
+
+        <motion.div
+          className="terms-list"
+          initial={shouldReduceMotion ? false : "hidden"}
+          animate="visible"
+          transition={{ staggerChildren: 0.06, delayChildren: 0.18 }}
+        >
+          {termsItems.map((item, index) => (
+            <motion.article className="terms-item" key={item.title} variants={reveal} transition={{ duration: 0.5, ease }}>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <div>
+                <h2>{item.title}</h2>
+                <p>{item.body}</p>
+              </div>
+            </motion.article>
+          ))}
+        </motion.div>
+
+        <section className="info-band info-band--compact" aria-label="Terms note">
+          <div>
+            <h2>Need a confirmed quote?</h2>
+            <p>Send the dates, pickup point, driver details, and car preference. We will return the exact rate and handover notes.</p>
+          </div>
+          <a className="info-button info-button--primary" href="/#request">
+            Request availability
+            <ArrowRight aria-hidden="true" size={17} />
+          </a>
+        </section>
+      </div>
+    </motion.section>
+  );
+}
+
+function ContactPage() {
+  const shouldReduceMotion = useReducedMotion();
+  const ease = [0.22, 1, 0.36, 1] as const;
+  const reveal = {
+    hidden: { opacity: 0, y: 22 },
+    visible: { opacity: 1, y: 0 },
+  };
+
+  return (
+    <motion.section
+      className="info-page contact-page"
+      id="contact-page"
+      aria-labelledby="contact-heading"
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.78, ease }}
+    >
+      <div className="info-page__inner">
+        <div className="info-hero">
+          <motion.div initial={shouldReduceMotion ? false : "hidden"} animate="visible" transition={{ staggerChildren: 0.08, delayChildren: 0.08 }}>
+            <motion.h1 id="contact-heading" variants={reveal} transition={{ duration: 0.68, ease }}>
+              Contact
+            </motion.h1>
+            <motion.p variants={reveal} transition={{ duration: 0.62, ease }}>
+              Reach the concierge team for availability, same-day timing, documents, or help choosing the right car.
+            </motion.p>
+          </motion.div>
+        </div>
+
+        <div className="contact-layout">
+          <motion.div
+            className="contact-methods"
+            initial={shouldReduceMotion ? false : "hidden"}
+            animate="visible"
+            transition={{ staggerChildren: 0.06, delayChildren: 0.16 }}
+          >
+            {contactMethods.map((method) => (
+              <motion.a className="contact-method" href={method.href} key={method.title} variants={reveal} transition={{ duration: 0.5, ease }}>
+                <span>{method.title}</span>
+                <strong>{method.value}</strong>
+                <small>{method.detail}</small>
+              </motion.a>
+            ))}
+          </motion.div>
+
+          <motion.form
+            className="contact-form"
+            action="mailto:hello@auradrive.example?subject=AURA%20DRIVE%20-%20Contact"
+            method="post"
+            encType="text/plain"
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 24, scale: 0.985 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.64, delay: 0.18, ease }}
+          >
+            <h2>Send a note.</h2>
+            <label>
+              <span>Name</span>
+              <input name="Name" placeholder="Your name" required />
+            </label>
+            <label>
+              <span>Phone or email</span>
+              <input name="Contact" placeholder="Where should we reply?" required />
+            </label>
+            <label>
+              <span>Message</span>
+              <textarea name="Message" placeholder="Tell us the car, date, location, or question." rows={5} required />
+            </label>
+            <button type="submit">
+              Send message
+              <ArrowRight aria-hidden="true" size={17} />
+            </button>
+          </motion.form>
+        </div>
+      </div>
+    </motion.section>
+  );
+}
+
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeArrival, setActiveArrival] = useState<number | null>(null);
@@ -819,13 +1137,20 @@ function App() {
   const filmVideoRef = useRef<HTMLVideoElement>(null);
   const shouldReduceMotion = useReducedMotion();
   const currentPath = typeof window === "undefined" ? "/" : window.location.pathname.replace(/\/$/, "");
+  const isHomePage = currentPath === "";
   const isCarsPage = currentPath === "/cars";
+  const isConciergePage = currentPath === "/concierge";
+  const isTermsPage = currentPath === "/terms";
+  const isContactPage = currentPath === "/contact";
   const carsHref = isCarsPage ? "#cars-list" : "/cars";
-  const requestHref = isCarsPage ? "/#request" : "#request";
-  const arrivalsHref = isCarsPage ? "/#arrivals" : "#arrivals";
-  const filmHref = isCarsPage ? "/#film" : "#film";
-  const processHref = isCarsPage ? "/#process" : "#process";
-  const faqHref = isCarsPage ? "/#faq" : "#faq";
+  const conciergeHref = isConciergePage ? "#concierge-page" : "/concierge";
+  const termsHref = isTermsPage ? "#terms-page" : "/terms";
+  const contactHref = isContactPage ? "#contact-page" : "/contact";
+  const requestHref = isHomePage ? "#request" : "/#request";
+  const arrivalsHref = isHomePage ? "#arrivals" : "/#arrivals";
+  const filmHref = isHomePage ? "#film" : "/#film";
+  const processHref = isHomePage ? "#process" : "/#process";
+  const faqHref = isHomePage ? "#faq" : "/#faq";
 
   const ease = [0.22, 1, 0.36, 1] as const;
   const reveal = {
@@ -897,13 +1222,13 @@ function App() {
           <motion.a href={carsHref} whileHover={{ y: -1 }}>
             Cars
           </motion.a>
-          <motion.a href="mailto:hello@auradrive.example?subject=AURA%20DRIVE%20-%20Rental%20terms" whileHover={{ y: -1 }}>
+          <motion.a href={termsHref} whileHover={{ y: -1 }}>
             Terms
           </motion.a>
-          <motion.a href={requestHref} whileHover={{ y: -1 }}>
+          <motion.a href={conciergeHref} whileHover={{ y: -1 }}>
             Concierge
           </motion.a>
-          <motion.a href="mailto:hello@auradrive.example" whileHover={{ y: -1 }}>
+          <motion.a href={contactHref} whileHover={{ y: -1 }}>
             Contact
           </motion.a>
         </nav>
@@ -911,7 +1236,7 @@ function App() {
         <div className="nav__actions">
           <motion.a
             className="nav__icon"
-            href="mailto:hello@auradrive.example"
+            href={contactHref}
             aria-label="Contact AURA DRIVE"
             whileHover={shouldReduceMotion ? undefined : { y: -2, scale: 1.02 }}
             whileTap={shouldReduceMotion ? undefined : { scale: 0.98 }}
@@ -952,13 +1277,13 @@ function App() {
               <a href={carsHref} onClick={() => setMenuOpen(false)}>
                 Cars
               </a>
-              <a href="mailto:hello@auradrive.example?subject=AURA%20DRIVE%20-%20Rental%20terms" onClick={() => setMenuOpen(false)}>
+              <a href={termsHref} onClick={() => setMenuOpen(false)}>
                 Terms
               </a>
-              <a href={requestHref} onClick={() => setMenuOpen(false)}>
+              <a href={conciergeHref} onClick={() => setMenuOpen(false)}>
                 Concierge
               </a>
-              <a href="mailto:hello@auradrive.example" onClick={() => setMenuOpen(false)}>
+              <a href={contactHref} onClick={() => setMenuOpen(false)}>
                 Contact
               </a>
             </motion.nav>
@@ -968,6 +1293,12 @@ function App() {
 
       {isCarsPage ? (
         <CarsPage />
+      ) : isConciergePage ? (
+        <ConciergePage />
+      ) : isTermsPage ? (
+        <TermsPage />
+      ) : isContactPage ? (
+        <ContactPage />
       ) : (
         <>
       <motion.section
@@ -1608,7 +1939,7 @@ function App() {
               </motion.a>
               <motion.a
                 className="closing-cta__button closing-cta__button--secondary"
-                href="mailto:hello@auradrive.example?subject=AURA%20DRIVE%20-%20Concierge"
+                href={conciergeHref}
                 whileHover={shouldReduceMotion ? undefined : { y: -3, scale: 1.012 }}
                 whileTap={shouldReduceMotion ? undefined : { scale: 0.98 }}
               >
@@ -1673,6 +2004,8 @@ function App() {
             <nav className="site-footer__nav" aria-label="Footer service links">
               <span>Service</span>
               <a href={requestHref}>Request</a>
+              <a href={conciergeHref}>Concierge</a>
+              <a href={termsHref}>Terms</a>
               <a href={processHref}>Process</a>
               <a href={faqHref}>FAQ</a>
             </nav>
