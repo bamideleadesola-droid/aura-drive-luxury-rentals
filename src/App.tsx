@@ -158,6 +158,29 @@ const testimonials = [
   },
 ];
 
+const closingSignals = [
+  {
+    title: "Airport pickup",
+    detail: "Timed around landing, luggage, and the first mile.",
+    icon: Plane,
+  },
+  {
+    title: "Same-day delivery",
+    detail: "We bring the car where the trip begins.",
+    icon: Sparkles,
+  },
+  {
+    title: "Prepared handover",
+    detail: "Clean, fueled, documented, and ready.",
+    icon: Gem,
+  },
+  {
+    title: "Concierge support",
+    detail: "A real person before and during the trip.",
+    icon: Phone,
+  },
+];
+
 type FleetShowcase = (typeof fleetShowcases)[number];
 
 type FleetShowcaseCardProps = {
@@ -805,6 +828,77 @@ function App() {
                 </motion.article>
               ))}
             </div>
+          </motion.div>
+        </div>
+      </motion.section>
+
+      <motion.section
+        className="closing-cta"
+        id="book"
+        aria-labelledby="closing-heading"
+        initial={shouldReduceMotion ? false : { opacity: 0, y: 28 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.18 }}
+        transition={{ duration: 0.72, ease }}
+      >
+        <div className="closing-cta__inner">
+          <motion.div
+            className="closing-cta__copy"
+            initial={shouldReduceMotion ? false : "hidden"}
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.45 }}
+            transition={{ staggerChildren: 0.1 }}
+          >
+            <motion.h2 id="closing-heading" variants={reveal} transition={{ duration: 0.64, ease }}>
+              Ready when you are.
+            </motion.h2>
+            <motion.p variants={reveal} transition={{ duration: 0.64, ease }}>
+              Tell us the car, location, and timing. We will confirm availability and prepare the handover.
+            </motion.p>
+            <motion.div className="closing-cta__actions" variants={reveal} transition={{ duration: 0.56, ease }}>
+              <motion.a
+                className="closing-cta__button closing-cta__button--primary"
+                href="mailto:hello@auradrive.example?subject=AURA%20DRIVE%20-%20Reserve"
+                whileHover={shouldReduceMotion ? undefined : { y: -3, scale: 1.012 }}
+                whileTap={shouldReduceMotion ? undefined : { scale: 0.98 }}
+              >
+                Reserve your car
+                <ArrowRight aria-hidden="true" size={18} />
+              </motion.a>
+              <motion.a
+                className="closing-cta__button closing-cta__button--secondary"
+                href="mailto:hello@auradrive.example?subject=AURA%20DRIVE%20-%20Concierge"
+                whileHover={shouldReduceMotion ? undefined : { y: -3, scale: 1.012 }}
+                whileTap={shouldReduceMotion ? undefined : { scale: 0.98 }}
+              >
+                Ask a concierge
+              </motion.a>
+            </motion.div>
+          </motion.div>
+
+          <motion.div
+            className="closing-cta__panel"
+            aria-label="Concierge confirmation details"
+            initial={shouldReduceMotion ? false : "hidden"}
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.24 }}
+            transition={{ staggerChildren: 0.07 }}
+          >
+            {closingSignals.map((signal) => {
+              const SignalIcon = signal.icon;
+
+              return (
+                <motion.div className="closing-cta__item" key={signal.title} variants={reveal} transition={{ duration: 0.5, ease }}>
+                  <span className="closing-cta__item-icon">
+                    <SignalIcon aria-hidden="true" size={18} />
+                  </span>
+                  <span>
+                    <strong>{signal.title}</strong>
+                    <span>{signal.detail}</span>
+                  </span>
+                </motion.div>
+              );
+            })}
           </motion.div>
         </div>
       </motion.section>

@@ -1520,6 +1520,165 @@ button {
   color: rgba(255, 255, 255, 0.62);
 }
 
+.closing-cta {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  padding: clamp(86px, 10vw, 148px) clamp(18px, 4.2vw, 78px) clamp(90px, 10vw, 144px);
+  color: #ffffff;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0) 30%),
+    radial-gradient(circle at 14% 82%, rgba(142, 121, 82, 0.16), rgba(142, 121, 82, 0) 34%),
+    linear-gradient(135deg, #080808 0%, #11110f 48%, #17130f 100%);
+}
+
+.closing-cta::before {
+  content: "";
+  position: absolute;
+  inset: clamp(18px, 2.8vw, 42px);
+  z-index: -1;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: clamp(24px, 2.5vw, 38px);
+  pointer-events: none;
+}
+
+.closing-cta__inner {
+  width: min(100%, 1180px);
+  margin: 0 auto;
+}
+
+.closing-cta__copy {
+  max-width: 820px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.closing-cta__copy h2 {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(34px, 4.2vw, 58px);
+  line-height: 1.08;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+.closing-cta__copy p {
+  max-width: 620px;
+  margin: 22px auto 0;
+  color: rgba(247, 247, 242, 0.66);
+  font-size: clamp(16px, 1.3vw, 20px);
+  line-height: 1.58;
+}
+
+.closing-cta__actions {
+  margin-top: clamp(30px, 4vw, 48px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.closing-cta__button {
+  min-height: 60px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 24px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  transition:
+    background 220ms ease,
+    border-color 220ms ease,
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.closing-cta__button--primary {
+  color: #11110f;
+  background: #ffffff;
+  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.32);
+}
+
+.closing-cta__button--secondary {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(16px);
+}
+
+.closing-cta__button:hover {
+  border-color: rgba(255, 255, 255, 0.42);
+}
+
+.closing-cta__button--primary:hover {
+  background: #f1efe9;
+}
+
+.closing-cta__button--secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.closing-cta__panel {
+  margin: clamp(38px, 5vw, 70px) auto 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+  box-shadow:
+    0 28px 72px rgba(0, 0, 0, 0.22),
+    0 1px 0 rgba(255, 255, 255, 0.08) inset;
+  backdrop-filter: blur(18px);
+}
+
+.closing-cta__item {
+  min-width: 0;
+  display: grid;
+  gap: 18px;
+  padding: clamp(22px, 2.5vw, 34px);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.closing-cta__item:last-child {
+  border-right: 0;
+}
+
+.closing-cta__item-icon {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.closing-cta__item strong,
+.closing-cta__item span span {
+  display: block;
+}
+
+.closing-cta__item strong {
+  color: #ffffff;
+  font-size: clamp(17px, 1.35vw, 20px);
+  line-height: 1.15;
+  font-weight: 700;
+}
+
+.closing-cta__item span span {
+  margin-top: 8px;
+  color: rgba(247, 247, 242, 0.58);
+  font-size: 14px;
+  line-height: 1.46;
+  font-weight: 500;
+}
+
 @media (max-width: 900px) {
   .nav {
     min-height: 82px;
@@ -1690,6 +1849,18 @@ button {
 
   .testimonial-card--featured {
     min-height: 420px;
+  }
+
+  .closing-cta__panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .closing-cta__item:nth-child(2) {
+    border-right: 0;
+  }
+
+  .closing-cta__item:nth-child(-n + 2) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 }
 
@@ -2012,6 +2183,55 @@ button {
 
   .testimonial-card blockquote {
     font-size: clamp(20px, 6vw, 25px);
+  }
+
+  .closing-cta {
+    padding: 72px 18px 94px;
+  }
+
+  .closing-cta::before {
+    inset: 12px;
+    border-radius: 24px;
+  }
+
+  .closing-cta__copy h2 {
+    font-size: clamp(34px, 11vw, 46px);
+    line-height: 1.06;
+  }
+
+  .closing-cta__copy p {
+    margin-top: 18px;
+    font-size: 15px;
+  }
+
+  .closing-cta__actions {
+    margin-top: 28px;
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .closing-cta__button {
+    width: 100%;
+    min-height: 56px;
+  }
+
+  .closing-cta__panel {
+    margin-top: 34px;
+    grid-template-columns: 1fr;
+  }
+
+  .closing-cta__item,
+  .closing-cta__item:nth-child(2) {
+    border-right: 0;
+  }
+
+  .closing-cta__item,
+  .closing-cta__item:nth-child(-n + 2) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .closing-cta__item:last-child {
+    border-bottom: 0;
   }
 }
 
