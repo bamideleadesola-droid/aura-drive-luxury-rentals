@@ -12,7 +12,6 @@ import {
 import {
   ArrowRight,
   BriefcaseBusiness,
-  Gauge,
   Gem,
   Images,
   Menu,
@@ -22,9 +21,7 @@ import {
   Play,
   Plus,
   Quote,
-  ShieldCheck,
   Sparkles,
-  Users,
   Waves,
   X,
 } from "lucide-react";
@@ -129,7 +126,9 @@ const carsPageVehicles = [
     id: "range-rover-autobiography",
     name: "Range Rover Autobiography",
     category: "SUV",
+    brand: "Range Rover",
     price: "from $940/day",
+    dailyRate: 940,
     image: "/assets/fleet-range-rover.jpg",
     alt: "Black Range Rover parked by palm trees and modern architecture",
     seats: "5 seats",
@@ -141,7 +140,9 @@ const carsPageVehicles = [
     id: "mercedes-s-class",
     name: "Mercedes S-Class",
     category: "Sedan",
+    brand: "Mercedes",
     price: "from $820/day",
+    dailyRate: 820,
     image: "/assets/fleet-s-class.jpg",
     alt: "Black Mercedes S-Class in a bright studio",
     seats: "4 seats",
@@ -153,7 +154,9 @@ const carsPageVehicles = [
     id: "rolls-royce-ghost",
     name: "Rolls-Royce Ghost",
     category: "Chauffeur",
+    brand: "Rolls-Royce",
     price: "from $1,640/day",
+    dailyRate: 1640,
     image: "/assets/fleet-rolls-royce.jpg",
     alt: "Black Rolls-Royce Ghost in a refined city street",
     seats: "4 seats",
@@ -165,7 +168,9 @@ const carsPageVehicles = [
     id: "porsche-911",
     name: "Porsche 911 GT3 RS",
     category: "Supercar",
+    brand: "Porsche",
     price: "from $1,180/day",
+    dailyRate: 1180,
     image: "/assets/fleet-porsche.jpg",
     alt: "White Porsche 911 GT3 RS driving on an open road",
     seats: "2 seats",
@@ -177,7 +182,9 @@ const carsPageVehicles = [
     id: "lamborghini-huracan",
     name: "Lamborghini Huracan",
     category: "Supercar",
+    brand: "Lamborghini",
     price: "from $1,450/day",
+    dailyRate: 1450,
     image: "/assets/fleet-lamborghini.jpg",
     alt: "Blue Lamborghini Huracan driving on a road",
     seats: "2 seats",
@@ -189,7 +196,9 @@ const carsPageVehicles = [
     id: "ferrari-portofino",
     name: "Ferrari Portofino",
     category: "Supercar",
+    brand: "Ferrari",
     price: "from $1,360/day",
+    dailyRate: 1360,
     image: "/assets/fleet-ferrari.jpg",
     alt: "Red Ferrari convertible on a sunlit road",
     seats: "2 seats",
@@ -198,6 +207,9 @@ const carsPageVehicles = [
     description: "Open-air grand touring with a lighter mood for coast drives, celebrations, and warm arrivals.",
   },
 ];
+
+const carBrands = ["All brands", "Range Rover", "Mercedes", "Rolls-Royce", "Porsche", "Lamborghini", "Ferrari"] as const;
+const carSortOptions = ["Recommended", "Price low", "Price high"] as const;
 
 const vehiclePreferenceStorageKey = "aura-drive-vehicle-preference";
 const vehicleRequestOptions = Array.from(new Set([...fleetShowcases.map((vehicle) => vehicle.name), ...carsPageVehicles.map((vehicle) => vehicle.name)]));
@@ -494,75 +506,120 @@ function FleetShowcaseStack({ onReserve }: { onReserve: (vehicleName: string) =>
 
 function CarsPage() {
   const [selectedCategory, setSelectedCategory] = useState<(typeof carCategories)[number]>("All");
+  const [selectedBrand, setSelectedBrand] = useState<(typeof carBrands)[number]>("All brands");
+  const [sortOption, setSortOption] = useState<(typeof carSortOptions)[number]>("Recommended");
   const shouldReduceMotion = useReducedMotion();
   const ease = [0.22, 1, 0.36, 1] as const;
   const reveal = {
     hidden: { opacity: 0, y: 22 },
     visible: { opacity: 1, y: 0 },
   };
-  const filteredVehicles =
-    selectedCategory === "All" ? carsPageVehicles : carsPageVehicles.filter((vehicle) => vehicle.category === selectedCategory);
-  const featuredVehicle = carsPageVehicles[0];
+  const filteredVehicles = carsPageVehicles
+    .filter((vehicle) => selectedCategory === "All" || vehicle.category === selectedCategory)
+    .filter((vehicle) => selectedBrand === "All brands" || vehicle.brand === selectedBrand)
+    .sort((firstVehicle, secondVehicle) => {
+      if (sortOption === "Price low") {
+        return firstVehicle.dailyRate - secondVehicle.dailyRate;
+      }
+
+      if (sortOption === "Price high") {
+        return secondVehicle.dailyRate - firstVehicle.dailyRate;
+      }
+
+      return 0;
+    });
+  const resetCarsFilters = () => {
+    setSelectedCategory("All");
+    setSelectedBrand("All brands");
+    setSortOption("Recommended");
+  };
 
   return (
-    <>
-      <motion.section
-        className="cars-page-hero"
-        aria-labelledby="cars-page-heading"
-        initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.78, ease }}
-      >
-        <div className="cars-page-hero__copy">
-          <motion.h1 id="cars-page-heading" initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.72, delay: 0.1, ease }}>
-            Cars prepared for the way you arrive.
-          </motion.h1>
-          <motion.p initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.64, delay: 0.18, ease }}>
-            Browse the luxury fleet by mood, route, and occasion. Every car is confirmed with concierge delivery and clear handover details.
-          </motion.p>
+    <motion.section
+      className="cars-page"
+      id="cars-list"
+      aria-labelledby="cars-page-heading"
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.78, ease }}
+    >
+      <div className="cars-page__inner">
+        <div className="cars-page__masthead">
+          <motion.div
+            initial={shouldReduceMotion ? false : "hidden"}
+            animate="visible"
+            transition={{ staggerChildren: 0.08, delayChildren: 0.08 }}
+          >
+            <motion.h1 id="cars-page-heading" variants={reveal} transition={{ duration: 0.68, ease }}>
+              Cars
+            </motion.h1>
+            <motion.p variants={reveal} transition={{ duration: 0.62, ease }}>
+              Explore a focused luxury fleet for airport arrivals, business routes, weekends, and private entrances.
+            </motion.p>
+          </motion.div>
+
+          <motion.a
+            className="cars-page__concierge"
+            href="/#request"
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.56, delay: 0.22, ease }}
+            whileHover={shouldReduceMotion ? undefined : { y: -3, scale: 1.012 }}
+            whileTap={shouldReduceMotion ? undefined : { scale: 0.98 }}
+          >
+            Ask concierge
+            <ArrowRight aria-hidden="true" size={17} />
+          </motion.a>
         </div>
 
-        <motion.a
-          className="cars-page-hero__feature"
-          href="/#request"
-          aria-label={`Request ${featuredVehicle.name}`}
-          initial={shouldReduceMotion ? false : { opacity: 0, y: 24, scale: 0.985 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.72, delay: 0.22, ease }}
-          whileHover={shouldReduceMotion ? undefined : { y: -5 }}
-          whileTap={shouldReduceMotion ? undefined : { scale: 0.996 }}
-          onClick={() => rememberVehiclePreference(featuredVehicle.name)}
+        <motion.div
+          className="cars-toolbar"
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.58, delay: 0.18, ease }}
         >
-          <img src={featuredVehicle.image} alt={featuredVehicle.alt} />
-          <span className="cars-page-hero__wash" />
-          <span className="cars-page-hero__meta">
-            <span>{featuredVehicle.category}</span>
-            <strong>{featuredVehicle.name}</strong>
-            <span>{featuredVehicle.price}</span>
-          </span>
-        </motion.a>
-      </motion.section>
-
-      <section className="cars-list" id="cars-list" aria-labelledby="cars-list-heading">
-        <div className="cars-list__top">
-          <div>
-            <h2 id="cars-list-heading">Browse cars.</h2>
-            <p>Filter by the kind of arrival, then request availability when a car feels right.</p>
+          <div className="cars-filter" aria-label="Filter cars by type">
+            <span className="cars-filter__label">Type</span>
+            <span className="cars-filter__options">
+              {carCategories.map((category) => (
+                <button
+                  className={`cars-filter__button ${selectedCategory === category ? "cars-filter__button--active" : ""}`}
+                  type="button"
+                  key={category}
+                  aria-pressed={selectedCategory === category}
+                  onClick={() => setSelectedCategory(category)}
+                >
+                  {category === "All" ? "All vehicles" : category}
+                </button>
+              ))}
+            </span>
           </div>
 
-          <div className="cars-filter" aria-label="Filter cars by category">
-            {carCategories.map((category) => (
-              <button
-                className={`cars-filter__button ${selectedCategory === category ? "cars-filter__button--active" : ""}`}
-                type="button"
-                key={category}
-                aria-pressed={selectedCategory === category}
-                onClick={() => setSelectedCategory(category)}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
+          <label className="cars-select">
+            <span>Brand</span>
+            <select value={selectedBrand} onChange={(event) => setSelectedBrand(event.currentTarget.value as (typeof carBrands)[number])}>
+              {carBrands.map((brand) => (
+                <option key={brand} value={brand}>
+                  {brand}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="cars-select">
+            <span>Sort</span>
+            <select value={sortOption} onChange={(event) => setSortOption(event.currentTarget.value as (typeof carSortOptions)[number])}>
+              {carSortOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </label>
+        </motion.div>
+
+        <div className="cars-page__count" aria-live="polite">
+          {filteredVehicles.length} {filteredVehicles.length === 1 ? "vehicle" : "vehicles"} available
         </div>
 
         <motion.div
@@ -571,47 +628,77 @@ function CarsPage() {
           animate="visible"
           transition={{ staggerChildren: 0.06 }}
         >
-          {filteredVehicles.map((vehicle) => (
-            <motion.article className="car-card" key={vehicle.id} variants={reveal} transition={{ duration: 0.52, ease }}>
-              <a className="car-card__media" href="/#request" aria-label={`Request ${vehicle.name}`} onClick={() => rememberVehiclePreference(vehicle.name)}>
-                <img src={vehicle.image} alt={vehicle.alt} />
-                <span className="car-card__wash" />
-                <span className="car-card__price">{vehicle.price}</span>
-              </a>
-
-              <div className="car-card__body">
-                <div className="car-card__title">
-                  <span>{vehicle.category}</span>
-                  <h3>{vehicle.name}</h3>
-                </div>
-
-                <p>{vehicle.description}</p>
-
-                <div className="car-card__specs" aria-label={`${vehicle.name} highlights`}>
-                  <span>
-                    <Users aria-hidden="true" size={16} />
-                    {vehicle.seats}
+          {filteredVehicles.length > 0 ? (
+            filteredVehicles.map((vehicle) => (
+              <motion.article className="car-card" key={vehicle.id} variants={reveal} transition={{ duration: 0.52, ease }}>
+                <a className="car-card__media" href="/#request" aria-label={`Request ${vehicle.name}`} onClick={() => rememberVehiclePreference(vehicle.name)}>
+                  <img src={vehicle.image} alt={vehicle.alt} />
+                  <span className="car-card__wash" />
+                  <span className="car-card__chips" aria-hidden="true">
+                    <span>{vehicle.seats}</span>
+                    <span>{vehicle.category}</span>
+                    <span>{vehicle.ideal}</span>
                   </span>
-                  <span>
-                    <Gauge aria-hidden="true" size={16} />
-                    {vehicle.power}
+                  <span className="car-card__view">
+                    View details
+                    <ArrowRight aria-hidden="true" size={15} />
                   </span>
-                  <span>
-                    <ShieldCheck aria-hidden="true" size={16} />
-                    {vehicle.ideal}
-                  </span>
-                </div>
-
-                <a className="car-card__request" href="/#request" onClick={() => rememberVehiclePreference(vehicle.name)}>
-                  Request this car
-                  <ArrowRight aria-hidden="true" size={17} />
                 </a>
-              </div>
-            </motion.article>
-          ))}
+
+                <div className="car-card__body">
+                  <div className="car-card__summary">
+                    <div className="car-card__title">
+                      <span>{vehicle.brand}</span>
+                      <h2>{vehicle.name}</h2>
+                    </div>
+                    <span className="car-card__price">{vehicle.price}</span>
+                  </div>
+
+                  <p>{vehicle.description}</p>
+
+                  <a className="car-card__request" href="/#request" onClick={() => rememberVehiclePreference(vehicle.name)}>
+                    Reserve this car
+                    <ArrowRight aria-hidden="true" size={17} />
+                  </a>
+                </div>
+              </motion.article>
+            ))
+          ) : (
+            <motion.div className="cars-empty" variants={reveal} transition={{ duration: 0.52, ease }}>
+              <h2>No cars match this filter.</h2>
+              <p>Reset the filters or ask concierge to recommend the closest available car.</p>
+              <button type="button" onClick={resetCarsFilters}>
+                Reset filters
+              </button>
+            </motion.div>
+          )}
         </motion.div>
-      </section>
-    </>
+
+      <motion.section
+        className="cars-page__closing"
+        aria-labelledby="cars-closing-heading"
+        initial={shouldReduceMotion ? false : { opacity: 0, y: 22 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.36 }}
+        transition={{ duration: 0.62, ease }}
+      >
+        <div>
+          <h2 id="cars-closing-heading">Not sure which car fits?</h2>
+          <p>Tell us the route, passengers, luggage, and tone of the arrival. We will suggest the right option.</p>
+        </div>
+
+        <motion.a
+          className="cars-page__closing-button"
+          href="/#request"
+          whileHover={shouldReduceMotion ? undefined : { y: -3, scale: 1.012 }}
+          whileTap={shouldReduceMotion ? undefined : { scale: 0.98 }}
+        >
+          Request a match
+          <ArrowRight aria-hidden="true" size={17} />
+        </motion.a>
+      </motion.section>
+      </div>
+    </motion.section>
   );
 }
 
