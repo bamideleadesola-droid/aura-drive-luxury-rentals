@@ -1184,6 +1184,51 @@ function App() {
           </motion.div>
         </div>
       </motion.section>
+
+      <footer className="site-footer">
+        <div className="site-footer__inner">
+          <div className="site-footer__top">
+            <a className="site-footer__brand" href="/" aria-label="AURA DRIVE home">
+              AURA DRIVE
+            </a>
+            <a className="site-footer__cta" href="#request">
+              Request availability
+              <ArrowRight aria-hidden="true" size={17} />
+            </a>
+          </div>
+
+          <div className="site-footer__grid">
+            <div className="site-footer__summary">
+              <p>Curated luxury cars, prepared for airport arrivals, business routes, weekends, and private entrances.</p>
+            </div>
+
+            <nav className="site-footer__nav" aria-label="Footer fleet links">
+              <span>Explore</span>
+              <a href="#fleet">Cars</a>
+              <a href="#arrivals">Arrivals</a>
+              <a href="#film">Film</a>
+            </nav>
+
+            <nav className="site-footer__nav" aria-label="Footer service links">
+              <span>Service</span>
+              <a href="#request">Request</a>
+              <a href="#process">Process</a>
+              <a href="#faq">FAQ</a>
+            </nav>
+
+            <div className="site-footer__contact">
+              <span>Contact</span>
+              <a href="mailto:hello@auradrive.example">hello@auradrive.example</a>
+              <a href="tel:+10000000000">+1 000 000 0000</a>
+            </div>
+          </div>
+
+          <div className="site-footer__bottom">
+            <span>© 2026 AURA DRIVE. Luxury car rentals by appointment.</span>
+            <span>Availability, delivery, and pricing confirmed by concierge.</span>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }
