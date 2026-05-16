@@ -595,15 +595,15 @@ const termsItems = [
 const contactMethods = [
   {
     title: "Email",
-    value: "hello@auradrive.example",
-    href: "mailto:hello@auradrive.example",
-    detail: "Best for quotes, documents, and planned bookings.",
+    value: "Use the contact form",
+    href: "#contact-form",
+    detail: "Best for quotes, documents, and planned bookings before a car is prepared.",
   },
   {
-    title: "Phone",
-    value: "+1 000 000 0000",
-    href: "tel:+10000000000",
-    detail: "Best for same-day timing and handover updates.",
+    title: "Booking",
+    value: "Send a request",
+    href: "/book",
+    detail: "Best for dates, delivery location, vehicle preference, and passenger details.",
   },
   {
     title: "Concierge",
@@ -1532,6 +1532,7 @@ function ContactPage() {
 
           <motion.form
             className="contact-form"
+            id="contact-form"
             onSubmit={handleContactSubmit}
             initial={shouldReduceMotion ? false : { opacity: 0, y: 24, scale: 0.985 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -2755,8 +2756,8 @@ function App() {
 
             <div className="site-footer__contact">
               <span>Contact</span>
-              <a href="mailto:hello@auradrive.example">hello@auradrive.example</a>
-              <a href="tel:+10000000000">+1 000 000 0000</a>
+              <a href={contactHref}>Contact form</a>
+              <a href={bookHref}>Book now</a>
             </div>
           </div>
 
