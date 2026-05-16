@@ -1,4 +1,4 @@
-import { type PointerEvent, useRef, useState } from "react";
+import { type FormEvent, type PointerEvent, useEffect, useRef, useState } from "react";
 import {
   AnimatePresence,
   motion,
@@ -618,6 +618,188 @@ const bookingAssurances = [
   "Delivery notes confirmed with concierge",
   "Rate and deposit shared before handover",
 ];
+
+const siteOrigin = "https://aura-drive-luxury-rentals.vercel.app";
+const lastSubmissionStorageKey = "aura-drive-last-submission";
+
+type FormStatus = "idle" | "submitting" | "error";
+
+type SubmissionResponse = {
+  ok: boolean;
+  reference: string;
+  type: string;
+  receivedAt: string;
+};
+
+type PageMeta = {
+  title: string;
+  description: string;
+  path: string;
+};
+
+function getRouteMeta(currentPath: string, carDetailId: string): PageMeta {
+  const path = currentPath || "/";
+
+  if (carDetailId) {
+    const vehicle = carsPageVehicles.find((car) => car.id === carDetailId);
+
+    return {
+      title: vehicle ? `${vehicle.name} | AURA DRIVE` : "Luxury Cars | AURA DRIVE",
+      description: vehicle
+        ? `${vehicle.name} available through AURA DRIVE with concierge delivery, clear rates, and a prepared handover.`
+        : "Browse AURA DRIVE luxury cars for airport arrivals, business routes, weekends, and private entrances.",
+      path,
+    };
+  }
+
+  const metaByPath: Record<string, PageMeta> = {
+    "/": {
+      title: "AURA DRIVE | Luxury Car Rentals",
+      description: "Luxury-only car rentals with concierge delivery for airport arrivals, business routes, weekends, and private entrances.",
+      path: "/",
+    },
+    "/cars": {
+      title: "Cars | AURA DRIVE",
+      description: "Browse the AURA DRIVE luxury fleet, including SUVs, executive sedans, chauffeur cars, and supercars.",
+      path: "/cars",
+    },
+    "/concierge": {
+      title: "Concierge | AURA DRIVE",
+      description: "Plan airport pickups, business routes, weekend trips, and private entrances with the AURA DRIVE concierge team.",
+      path: "/concierge",
+    },
+    "/terms": {
+      title: "Rental Terms | AURA DRIVE",
+      description: "Review AURA DRIVE booking, delivery, driver, coverage, and handover terms before confirming a luxury car rental.",
+      path: "/terms",
+    },
+    "/contact": {
+      title: "Contact | AURA DRIVE",
+      description: "Contact the AURA DRIVE concierge team for availability, documents, same-day timing, or vehicle guidance.",
+      path: "/contact",
+    },
+    "/book": {
+      title: "Book Now | AURA DRIVE",
+      description: "Request a luxury car booking with vehicle preference, pickup timing, delivery location, and concierge support.",
+      path: "/book",
+    },
+    "/thank-you": {
+      title: "Request Received | AURA DRIVE",
+      description: "Your AURA DRIVE request has been received. Concierge will review availability and reply with the next step.",
+      path: "/thank-you",
+    },
+  };
+
+  return metaByPath[path] ?? metaByPath["/"];
+}
+
+function setMetaAttribute(attribute: "name" | "property", key: string, content: string) {
+  if (typeof document === "undefined") {
+    return;
+  }
+
+  let element = document.head.querySelector<HTMLMetaElement>(`meta[${attribute}="${key}"]`);
+
+  if (!element) {
+    element = document.createElement("meta");
+    element.setAttribute(attribute, key);
+    document.head.appendChild(element);
+  }
+
+  element.setAttribute("content", content);
+}
+
+function setCanonical(path: string) {
+  if (typeof document === "undefined") {
+    return;
+  }
+
+  let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+
+  if (!canonical) {
+    canonical = document.createElement("link");
+    canonical.setAttribute("rel", "canonical");
+    document.head.appendChild(canonical);
+  }
+
+  canonical.setAttribute("href", `${siteOrigin}${path === "/" ? "" : path}`);
+}
+
+function useRouteMeta(currentPath: string, carDetailId: string) {
+  useEffect(() => {
+    const meta = getRouteMeta(currentPath, carDetailId);
+
+    document.title = meta.title;
+    setMetaAttribute("name", "description", meta.description);
+    setMetaAttribute("property", "og:title", meta.title);
+    setMetaAttribute("property", "og:description", meta.description);
+    setMetaAttribute("property", "og:url", `${siteOrigin}${meta.path === "/" ? "" : meta.path}`);
+    setMetaAttribute("property", "og:type", "website");
+    setMetaAttribute("name", "twitter:card", "summary_large_image");
+    setMetaAttribute("name", "twitter:title", meta.title);
+    setMetaAttribute("name", "twitter:description", meta.description);
+    setCanonical(meta.path);
+  }, [currentPath, carDetailId]);
+}
+
+function readLastSubmission() {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  try {
+    const savedSubmission = window.localStorage.getItem(lastSubmissionStorageKey);
+
+    return savedSubmission ? (JSON.parse(savedSubmission) as SubmissionResponse) : null;
+  } catch {
+    return null;
+  }
+}
+
+function rememberSubmission(submission: SubmissionResponse) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    window.localStorage.setItem(lastSubmissionStorageKey, JSON.stringify(submission));
+  } catch {
+    // Confirmation still works through the URL reference if storage is unavailable.
+  }
+}
+
+async function submitLeadForm(form: HTMLFormElement, formType: string, extraFields: Record<string, string> = {}) {
+  const formData = new FormData(form);
+  const fields = Object.fromEntries([...formData.entries()].map(([key, value]) => [key, String(value)]));
+  const response = await fetch("/api/submit", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      formType,
+      fields: {
+        ...fields,
+        ...extraFields,
+      },
+      path: typeof window === "undefined" ? "" : window.location.pathname,
+    }),
+  });
+
+  const result = (await response.json()) as SubmissionResponse & { message?: string };
+
+  if (!response.ok || !result.ok) {
+    throw new Error(result.message ?? "Unable to submit the form.");
+  }
+
+  rememberSubmission(result);
+
+  if (typeof window !== "undefined") {
+    window.location.assign(`/thank-you?ref=${encodeURIComponent(result.reference)}&type=${encodeURIComponent(result.type)}`);
+  }
+
+  return result;
+}
 
 type FleetShowcase = (typeof fleetShowcases)[number];
 
@@ -1288,11 +1470,27 @@ function TermsPage() {
 }
 
 function ContactPage() {
+  const [formStatus, setFormStatus] = useState<FormStatus>("idle");
+  const [formMessage, setFormMessage] = useState("");
   const shouldReduceMotion = useReducedMotion();
   const ease = [0.22, 1, 0.36, 1] as const;
   const reveal = {
     hidden: { opacity: 0, y: 22 },
     visible: { opacity: 1, y: 0 },
+  };
+  const handleContactSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+
+    setFormStatus("submitting");
+    setFormMessage("");
+
+    try {
+      await submitLeadForm(form, "contact");
+    } catch {
+      setFormStatus("error");
+      setFormMessage("We could not send this message. Please try again in a moment.");
+    }
   };
 
   return (
@@ -1334,9 +1532,7 @@ function ContactPage() {
 
           <motion.form
             className="contact-form"
-            action="mailto:hello@auradrive.example?subject=AURA%20DRIVE%20-%20Contact"
-            method="post"
-            encType="text/plain"
+            onSubmit={handleContactSubmit}
             initial={shouldReduceMotion ? false : { opacity: 0, y: 24, scale: 0.985 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.64, delay: 0.18, ease }}
@@ -1354,10 +1550,13 @@ function ContactPage() {
               <span>Message</span>
               <textarea name="Message" placeholder="Tell us the car, date, location, or question." rows={5} required />
             </label>
-            <button type="submit">
-              Send message
+            <button type="submit" disabled={formStatus === "submitting"}>
+              {formStatus === "submitting" ? "Sending..." : "Send message"}
               <ArrowRight aria-hidden="true" size={17} />
             </button>
+            <p className="form-status" aria-live="polite">
+              {formMessage}
+            </p>
           </motion.form>
         </div>
       </div>
@@ -1368,6 +1567,8 @@ function ContactPage() {
 function BookPage() {
   const [selectedVehicle, setSelectedVehicle] = useState(getInitialVehiclePreference);
   const [selectedTripStyle, setSelectedTripStyle] = useState(requestTypes[0].label);
+  const [formStatus, setFormStatus] = useState<FormStatus>("idle");
+  const [formMessage, setFormMessage] = useState("");
   const shouldReduceMotion = useReducedMotion();
   const ease = [0.22, 1, 0.36, 1] as const;
   const reveal = {
@@ -1385,6 +1586,23 @@ function BookPage() {
 
     if (vehicleName !== "Recommend the best fit") {
       rememberVehiclePreference(vehicleName);
+    }
+  };
+  const handleBookingSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+
+    setFormStatus("submitting");
+    setFormMessage("");
+
+    try {
+      await submitLeadForm(form, "booking", {
+        "Trip style": selectedTripStyle,
+        "Vehicle preference": selectedVehicle,
+      });
+    } catch {
+      setFormStatus("error");
+      setFormMessage("We could not send this booking request. Please try again in a moment.");
     }
   };
 
@@ -1412,9 +1630,7 @@ function BookPage() {
         <div className="booking-layout">
           <motion.form
             className="booking-form"
-            action="mailto:hello@auradrive.example?subject=AURA%20DRIVE%20-%20Book%20now"
-            method="post"
-            encType="text/plain"
+            onSubmit={handleBookingSubmit}
             initial={shouldReduceMotion ? false : { opacity: 0, y: 24, scale: 0.985 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.64, delay: 0.12, ease }}
@@ -1510,12 +1726,16 @@ function BookPage() {
             <motion.button
               className="booking-submit"
               type="submit"
+              disabled={formStatus === "submitting"}
               whileHover={shouldReduceMotion ? undefined : { y: -2, scale: 1.006 }}
               whileTap={shouldReduceMotion ? undefined : { scale: 0.985 }}
             >
-              Send booking request
+              {formStatus === "submitting" ? "Sending request..." : "Send booking request"}
               <ArrowRight aria-hidden="true" size={17} />
             </motion.button>
+            <p className="form-status" aria-live="polite">
+              {formMessage}
+            </p>
           </motion.form>
 
           <motion.aside
@@ -1552,12 +1772,79 @@ function BookPage() {
   );
 }
 
+function ThankYouPage() {
+  const [lastSubmission] = useState(readLastSubmission);
+  const shouldReduceMotion = useReducedMotion();
+  const ease = [0.22, 1, 0.36, 1] as const;
+  const searchParams = typeof window === "undefined" ? new URLSearchParams() : new URLSearchParams(window.location.search);
+  const reference = searchParams.get("ref") ?? lastSubmission?.reference ?? "AURA-REQUEST";
+  const submissionType = searchParams.get("type") ?? lastSubmission?.type ?? "booking";
+  const isContact = submissionType === "contact";
+  const steps = isContact
+    ? ["Message reviewed", "Concierge reply", "Next step confirmed"]
+    : ["Availability review", "Car and rate confirmed", "Handover plan prepared"];
+
+  return (
+    <motion.section
+      className="info-page thank-you-page"
+      id="thank-you"
+      aria-labelledby="thank-you-heading"
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.78, ease }}
+    >
+      <div className="info-page__inner info-page__inner--narrow">
+        <motion.div
+          className="thank-you-panel"
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 28, scale: 0.985 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.7, ease }}
+        >
+          <span className="thank-you-panel__mark">AURA DRIVE</span>
+          <h1 id="thank-you-heading">{isContact ? "Message received." : "Request received."}</h1>
+          <p>
+            {isContact
+              ? "Concierge will review your note and reply with the right next step."
+              : "Concierge will check availability, confirm the rate, and send the handover plan."}
+          </p>
+
+          <div className="thank-you-panel__reference">
+            <span>Reference</span>
+            <strong>{reference}</strong>
+          </div>
+
+          <div className="thank-you-panel__steps" aria-label="What happens next">
+            {steps.map((step, index) => (
+              <span key={step}>
+                <small>{String(index + 1).padStart(2, "0")}</small>
+                <strong>{step}</strong>
+              </span>
+            ))}
+          </div>
+
+          <div className="thank-you-panel__actions">
+            <a className="info-button info-button--primary" href="/cars">
+              Browse cars
+              <ArrowRight aria-hidden="true" size={17} />
+            </a>
+            <a className="info-button info-button--secondary" href="/book">
+              Book another car
+            </a>
+          </div>
+        </motion.div>
+      </div>
+    </motion.section>
+  );
+}
+
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeArrival, setActiveArrival] = useState<number | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [selectedRequestType, setSelectedRequestType] = useState(requestTypes[0].label);
   const [selectedVehicle, setSelectedVehicle] = useState(getInitialVehiclePreference);
+  const [requestStatus, setRequestStatus] = useState<FormStatus>("idle");
+  const [requestMessage, setRequestMessage] = useState("");
   const [filmPlaying, setFilmPlaying] = useState(false);
   const filmVideoRef = useRef<HTMLVideoElement>(null);
   const shouldReduceMotion = useReducedMotion();
@@ -1570,6 +1857,7 @@ function App() {
   const isTermsPage = currentPath === "/terms";
   const isContactPage = currentPath === "/contact";
   const isBookPage = currentPath === "/book";
+  const isThankYouPage = currentPath === "/thank-you";
   const carsHref = isCarsPage ? "#cars-list" : "/cars";
   const conciergeHref = isConciergePage ? "#concierge-page" : "/concierge";
   const termsHref = isTermsPage ? "#terms-page" : "/terms";
@@ -1580,6 +1868,7 @@ function App() {
   const filmHref = isHomePage ? "#film" : "/#film";
   const processHref = isHomePage ? "#process" : "/#process";
   const faqHref = isHomePage ? "#faq" : "/#faq";
+  useRouteMeta(currentPath, carDetailId);
 
   const ease = [0.22, 1, 0.36, 1] as const;
   const reveal = {
@@ -1616,6 +1905,23 @@ function App() {
   const handleReserveVehicle = (vehicleName: string) => {
     rememberVehiclePreference(vehicleName);
     setSelectedVehicle(vehicleName);
+  };
+  const handleAvailabilitySubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+
+    setRequestStatus("submitting");
+    setRequestMessage("");
+
+    try {
+      await submitLeadForm(form, "availability", {
+        "Trip style": selectedRequestType,
+        "Vehicle preference": selectedVehicle,
+      });
+    } catch {
+      setRequestStatus("error");
+      setRequestMessage("We could not send this request. Please try again in a moment.");
+    }
   };
   const toggleFilmPlayback = () => {
     const video = filmVideoRef.current;
@@ -1735,6 +2041,8 @@ function App() {
         <ContactPage />
       ) : isBookPage ? (
         <BookPage />
+      ) : isThankYouPage ? (
+        <ThankYouPage />
       ) : (
         <>
       <motion.section
@@ -1835,9 +2143,7 @@ function App() {
 
           <motion.form
             className="request-form"
-            action="mailto:hello@auradrive.example?subject=AURA%20DRIVE%20-%20Availability%20request"
-            method="post"
-            encType="text/plain"
+            onSubmit={handleAvailabilitySubmit}
             initial={shouldReduceMotion ? false : { opacity: 0, y: 24, scale: 0.985 }}
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
             viewport={{ once: true, amount: 0.32 }}
@@ -1915,11 +2221,11 @@ function App() {
             </div>
 
             <div className="request-form__footer">
-              <button className="request-form__submit" type="submit">
-                Request availability
+              <button className="request-form__submit" type="submit" disabled={requestStatus === "submitting"}>
+                {requestStatus === "submitting" ? "Sending request..." : "Request availability"}
                 <ArrowRight aria-hidden="true" size={18} />
               </button>
-              <span>Same-day requests depend on availability.</span>
+              <span>{requestMessage || "Same-day requests depend on availability."}</span>
             </div>
           </motion.form>
         </div>

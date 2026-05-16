@@ -2236,6 +2236,137 @@ button {
   border-bottom: 0;
 }
 
+.form-status {
+  min-height: 20px;
+  margin: -4px 0 0;
+  color: #8c2c1f;
+  font-size: 13px;
+  line-height: 1.45;
+  font-weight: 700;
+}
+
+.booking-submit:disabled,
+.contact-form button:disabled,
+.request-form__submit:disabled {
+  cursor: wait;
+  opacity: 0.7;
+  transform: none;
+}
+
+.thank-you-page {
+  min-height: calc(100svh - 92px);
+  display: grid;
+  align-items: center;
+}
+
+.thank-you-panel {
+  padding: clamp(34px, 5vw, 70px);
+  border: 1px solid rgba(23, 23, 23, 0.08);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 30px 90px rgba(20, 20, 20, 0.09);
+  text-align: center;
+}
+
+.thank-you-panel__mark {
+  color: rgba(23, 23, 23, 0.48);
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 850;
+  letter-spacing: 0.42em;
+}
+
+.thank-you-panel h1 {
+  max-width: 760px;
+  margin: 24px auto 0;
+  color: #080808;
+  font-size: clamp(54px, 7vw, 104px);
+  line-height: 0.92;
+  font-weight: 520;
+  letter-spacing: 0;
+}
+
+.thank-you-panel p {
+  max-width: 620px;
+  margin: 24px auto 0;
+  color: rgba(23, 23, 23, 0.62);
+  font-size: clamp(16px, 1.25vw, 20px);
+  line-height: 1.58;
+}
+
+.thank-you-panel__reference {
+  width: min(100%, 520px);
+  margin: clamp(28px, 4vw, 44px) auto 0;
+  padding: 18px 20px;
+  display: grid;
+  gap: 8px;
+  border: 1px solid rgba(23, 23, 23, 0.08);
+  border-radius: 8px;
+  background: #f7f7f4;
+}
+
+.thank-you-panel__reference span {
+  color: rgba(23, 23, 23, 0.48);
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.thank-you-panel__reference strong {
+  color: #080808;
+  font-size: clamp(22px, 2vw, 32px);
+  line-height: 1.05;
+  font-weight: 620;
+  word-break: break-word;
+}
+
+.thank-you-panel__steps {
+  margin-top: clamp(28px, 4vw, 48px);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  overflow: hidden;
+  border: 1px solid rgba(23, 23, 23, 0.08);
+  border-radius: 8px;
+}
+
+.thank-you-panel__steps > span {
+  min-width: 0;
+  padding: clamp(18px, 2.2vw, 28px);
+  display: grid;
+  gap: 12px;
+  border-right: 1px solid rgba(23, 23, 23, 0.08);
+  text-align: left;
+}
+
+.thank-you-panel__steps > span:last-child {
+  border-right: 0;
+}
+
+.thank-you-panel__steps small {
+  color: rgba(23, 23, 23, 0.44);
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+}
+
+.thank-you-panel__steps strong {
+  color: #080808;
+  font-size: clamp(17px, 1.5vw, 22px);
+  line-height: 1.1;
+  font-weight: 680;
+}
+
+.thank-you-panel__actions {
+  margin-top: clamp(28px, 4vw, 44px);
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 .arrival {
   padding: clamp(76px, 9vw, 126px) clamp(18px, 4.2vw, 78px) clamp(88px, 10vw, 148px);
   color: var(--ink);
@@ -4415,6 +4546,20 @@ button {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .thank-you-panel__steps {
+    grid-template-columns: 1fr;
+  }
+
+  .thank-you-panel__steps > span,
+  .thank-you-panel__steps > span:last-child {
+    border-right: 0;
+    border-bottom: 1px solid rgba(23, 23, 23, 0.08);
+  }
+
+  .thank-you-panel__steps > span:last-child {
+    border-bottom: 0;
+  }
+
   .arrival {
     padding-top: 72px;
   }
@@ -4937,6 +5082,18 @@ button {
 
   .booking-summary__media {
     min-height: 320px;
+  }
+
+  .thank-you-panel {
+    padding: 28px 20px;
+  }
+
+  .thank-you-panel h1 {
+    font-size: clamp(42px, 13vw, 62px);
+  }
+
+  .thank-you-panel__actions {
+    display: grid;
   }
 
   .arrival {

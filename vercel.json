@@ -39,6 +39,14 @@
     {
       "source": "/book/:path*",
       "destination": "/index.html"
+    },
+    {
+      "source": "/thank-you",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/thank-you/:path*",
+      "destination": "/index.html"
     }
   ]
 }
