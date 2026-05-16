@@ -323,6 +323,60 @@ const carSortOptions = ["Recommended", "Price low", "Price high"] as const;
 const vehiclePreferenceStorageKey = "aura-drive-vehicle-preference";
 const vehicleRequestOptions = Array.from(new Set([...fleetShowcases.map((vehicle) => vehicle.name), ...carsPageVehicles.map((vehicle) => vehicle.name)]));
 
+type VehicleGalleryImage = {
+  src: string;
+  alt: string;
+};
+
+const carDetailGalleries: Record<string, VehicleGalleryImage[]> = {
+  "range-rover-autobiography": [
+    { src: "/assets/fleet-range-rover.jpg", alt: "Black Range Rover parked by palm trees and modern architecture" },
+    { src: "/assets/range-rover-cabin-front.jpg", alt: "Range Rover front cabin with leather seats" },
+    { src: "/assets/range-rover-cabin-rear.jpg", alt: "Range Rover rear cabin seating" },
+    { src: "/assets/range-rover-cabin-controls.jpg", alt: "Range Rover interior controls and center console" },
+    { src: "/assets/range-rover-cabin-profile.jpg", alt: "Range Rover side cabin profile" },
+  ],
+  "mercedes-s-class": [
+    { src: "/assets/fleet-s-class.jpg", alt: "Black Mercedes S-Class in a bright studio" },
+    { src: "/assets/mercedes-cabin-front.jpg", alt: "Mercedes S-Class front cabin and steering wheel" },
+    { src: "/assets/mercedes-cabin-rear.jpg", alt: "Mercedes S-Class rear cabin detail" },
+    { src: "/assets/mercedes-exterior-side.jpg", alt: "Mercedes S-Class exterior side profile" },
+    { src: "/assets/mercedes-exterior-rear.jpg", alt: "Mercedes S-Class rear exterior detail" },
+  ],
+  "rolls-royce-ghost": [
+    { src: "/assets/fleet-rolls-royce.jpg", alt: "Black Rolls-Royce Ghost in a refined city street" },
+    { src: "/assets/ghost-cabin-front.jpg", alt: "Rolls-Royce Ghost front cabin detail" },
+    { src: "/assets/ghost-cabin-seat.jpg", alt: "Rolls-Royce Ghost leather seat detail" },
+    { src: "/assets/ghost-cabin-dashboard.jpg", alt: "Rolls-Royce Ghost dashboard detail" },
+    { src: "/assets/ghost-cabin-rear.jpg", alt: "Rolls-Royce Ghost rear cabin detail" },
+  ],
+};
+
+const categoryDetailCopy: Record<string, string> = {
+  Chauffeur: "Quiet presence for private transfers, events, and entrances where the handover should feel invisible.",
+  Sedan: "A polished choice for airport arrivals, business days, and calm city movement.",
+  Supercar: "Sharper energy for weekends, coast routes, evening entrances, and moments that should feel memorable.",
+  SUV: "Space, comfort, and presence for airport pickup, luggage, family routes, and longer plans.",
+};
+
+function getVehicleDetailPath(vehicleName: string) {
+  const vehicle = carsPageVehicles.find((car) => car.name === vehicleName);
+
+  return vehicle ? `/cars/${vehicle.id}` : "/cars";
+}
+
+function getVehicleGallery(vehicle: (typeof carsPageVehicles)[number]) {
+  return (
+    carDetailGalleries[vehicle.id] ?? [
+      { src: vehicle.image, alt: vehicle.alt },
+      { src: "/assets/arrival-airport.jpg", alt: "Luxury car prepared for an airport pickup" },
+      { src: "/assets/arrival-business.jpg", alt: "Luxury car prepared for a business arrival" },
+      { src: "/assets/arrival-coast.jpg", alt: "Luxury performance car on a coastal route" },
+      { src: "/assets/arrival-evening.jpg", alt: "Luxury car prepared for an evening entrance" },
+    ]
+  );
+}
+
 function rememberVehiclePreference(vehicleName: string) {
   if (typeof window === "undefined") {
     return;
@@ -606,9 +660,9 @@ function FleetShowcaseCard({ active, index, onReserve, progress, vehicle }: Flee
       <div className="fleet-showcase__gallery" aria-label={`${vehicle.name} image gallery`}>
         <motion.a
           className="fleet-showcase__main"
-          href="/book"
-          aria-label={`Reserve ${vehicle.name}`}
-          onClick={() => onReserve(vehicle.name)}
+          href={getVehicleDetailPath(vehicle.name)}
+          aria-label={`View ${vehicle.name} details`}
+          onClick={() => rememberVehiclePreference(vehicle.name)}
           whileHover={shouldReduceMotion ? undefined : { y: -4 }}
           whileTap={shouldReduceMotion ? undefined : { scale: 0.996 }}
           transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
@@ -625,10 +679,10 @@ function FleetShowcaseCard({ active, index, onReserve, progress, vehicle }: Flee
           {vehicle.gallery.map((image) => (
             <motion.a
               className="fleet-showcase__thumb"
-              href="/book"
+              href={getVehicleDetailPath(vehicle.name)}
               key={image.src}
-              aria-label={`Reserve ${vehicle.name}`}
-              onClick={() => onReserve(vehicle.name)}
+              aria-label={`View ${vehicle.name} details`}
+              onClick={() => rememberVehiclePreference(vehicle.name)}
               whileHover={shouldReduceMotion ? undefined : { y: -3 }}
               whileTap={shouldReduceMotion ? undefined : { scale: 0.996 }}
               transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
@@ -827,7 +881,7 @@ function CarsPage() {
           {filteredVehicles.length > 0 ? (
             filteredVehicles.map((vehicle) => (
               <motion.article className="car-card" key={vehicle.id} variants={reveal} transition={{ duration: 0.52, ease }}>
-                <a className="car-card__media" href="/book" aria-label={`Request ${vehicle.name}`} onClick={() => rememberVehiclePreference(vehicle.name)}>
+                <a className="car-card__media" href={`/cars/${vehicle.id}`} aria-label={`View ${vehicle.name} details`} onClick={() => rememberVehiclePreference(vehicle.name)}>
                   <img src={vehicle.image} alt={vehicle.alt} />
                   <span className="car-card__wash" />
                   <span className="car-card__chips" aria-hidden="true">
@@ -891,6 +945,184 @@ function CarsPage() {
           <ArrowRight aria-hidden="true" size={17} />
         </motion.a>
       </motion.section>
+      </div>
+    </motion.section>
+  );
+}
+
+function CarDetailPage({ vehicleId }: { vehicleId: string }) {
+  const shouldReduceMotion = useReducedMotion();
+  const ease = [0.22, 1, 0.36, 1] as const;
+  const reveal = {
+    hidden: { opacity: 0, y: 22 },
+    visible: { opacity: 1, y: 0 },
+  };
+  const vehicle = carsPageVehicles.find((car) => car.id === vehicleId);
+
+  if (!vehicle) {
+    return (
+      <motion.section
+        className="cars-page car-detail-page"
+        id="car-detail"
+        aria-labelledby="car-detail-heading"
+        initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.72, ease }}
+      >
+        <div className="cars-page__inner">
+          <div className="car-detail-empty">
+            <h1 id="car-detail-heading">Car not found</h1>
+            <p>This car may no longer be available. Browse the fleet or ask concierge to match the right option.</p>
+            <a href="/cars">
+              Browse cars
+              <ArrowRight aria-hidden="true" size={17} />
+            </a>
+          </div>
+        </div>
+      </motion.section>
+    );
+  }
+
+  const gallery = getVehicleGallery(vehicle);
+  const [primaryImage, ...supportingImages] = gallery;
+  const directMatches = carsPageVehicles
+    .filter((candidate) => candidate.id !== vehicle.id)
+    .filter((candidate) => candidate.category === vehicle.category || candidate.brand === vehicle.brand)
+    .slice(0, 3);
+  const relatedIds = new Set(directMatches.map((candidate) => candidate.id));
+  const relatedVehicles = [
+    ...directMatches,
+    ...carsPageVehicles.filter((candidate) => candidate.id !== vehicle.id && !relatedIds.has(candidate.id)),
+  ].slice(0, 3);
+  const specs = [
+    { label: "Rate", value: vehicle.price },
+    { label: "Seats", value: vehicle.seats },
+    { label: "Best for", value: vehicle.ideal },
+    { label: "Delivery", value: "Airport / hotel / residence" },
+    { label: "Support", value: vehicle.category === "Chauffeur" ? "Driver-led available" : "Concierge handover" },
+  ];
+
+  return (
+    <motion.section
+      className="cars-page car-detail-page"
+      id="car-detail"
+      aria-labelledby="car-detail-heading"
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.78, ease }}
+    >
+      <div className="cars-page__inner">
+        <motion.a
+          className="car-detail__return"
+          href="/cars"
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease }}
+        >
+          All cars
+        </motion.a>
+
+        <motion.div
+          className="car-detail-gallery"
+          aria-label={`${vehicle.name} gallery`}
+          initial={shouldReduceMotion ? false : "hidden"}
+          animate="visible"
+          transition={{ staggerChildren: 0.06, delayChildren: 0.06 }}
+        >
+          <motion.div className="car-detail-gallery__main" variants={reveal} transition={{ duration: 0.58, ease }}>
+            <img src={primaryImage.src} alt={primaryImage.alt} />
+            <span className="car-detail-gallery__wash" />
+            <a href="/book" onClick={() => rememberVehiclePreference(vehicle.name)}>
+              Book this car
+              <ArrowRight aria-hidden="true" size={17} />
+            </a>
+          </motion.div>
+
+          <div className="car-detail-gallery__side">
+            {supportingImages.slice(0, 4).map((image) => (
+              <motion.div className="car-detail-gallery__thumb" key={image.src} variants={reveal} transition={{ duration: 0.52, ease }}>
+                <img src={image.src} alt={image.alt} />
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        <div className="car-detail-info">
+          <motion.div
+            className="car-detail-info__copy"
+            initial={shouldReduceMotion ? false : "hidden"}
+            animate="visible"
+            transition={{ staggerChildren: 0.08, delayChildren: 0.08 }}
+          >
+            <motion.span variants={reveal} transition={{ duration: 0.48, ease }}>
+              {vehicle.category}
+            </motion.span>
+            <motion.h1 id="car-detail-heading" variants={reveal} transition={{ duration: 0.62, ease }}>
+              {vehicle.name}
+            </motion.h1>
+            <motion.p variants={reveal} transition={{ duration: 0.56, ease }}>
+              {categoryDetailCopy[vehicle.category] ?? "Prepared with concierge support for a calm, polished handover."}
+            </motion.p>
+          </motion.div>
+
+          <motion.aside
+            className="car-detail-booking"
+            aria-label={`${vehicle.name} booking summary`}
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 24, scale: 0.985 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.62, delay: 0.16, ease }}
+          >
+            <span>{vehicle.price}</span>
+            <small>Concierge delivery included</small>
+            <a href="/book" onClick={() => rememberVehiclePreference(vehicle.name)}>
+              Reserve this car
+              <ArrowRight aria-hidden="true" size={17} />
+            </a>
+          </motion.aside>
+        </div>
+
+        <motion.div
+          className="car-detail-specs"
+          aria-label={`${vehicle.name} key details`}
+          initial={shouldReduceMotion ? false : "hidden"}
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.22 }}
+          transition={{ staggerChildren: 0.05 }}
+        >
+          {specs.map((spec) => (
+            <motion.div className="car-detail-spec" key={spec.label} variants={reveal} transition={{ duration: 0.48, ease }}>
+              <span>{spec.label}</span>
+              <strong>{spec.value}</strong>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        <motion.section
+          className="car-detail-related"
+          aria-labelledby="related-cars-heading"
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.18 }}
+          transition={{ duration: 0.62, ease }}
+        >
+          <div className="car-detail-related__top">
+            <h2 id="related-cars-heading">Similar cars</h2>
+            <a href="/cars">View fleet</a>
+          </div>
+
+          <div className="car-detail-related__grid">
+            {relatedVehicles.map((relatedVehicle) => (
+              <a className="car-detail-related__card" href={`/cars/${relatedVehicle.id}`} key={relatedVehicle.id}>
+                <img src={relatedVehicle.image} alt={relatedVehicle.alt} />
+                <span>
+                  <small>{relatedVehicle.category}</small>
+                  <strong>{relatedVehicle.name}</strong>
+                  <em>{relatedVehicle.price}</em>
+                </span>
+              </a>
+            ))}
+          </div>
+        </motion.section>
       </div>
     </motion.section>
   );
@@ -1330,8 +1562,10 @@ function App() {
   const filmVideoRef = useRef<HTMLVideoElement>(null);
   const shouldReduceMotion = useReducedMotion();
   const currentPath = typeof window === "undefined" ? "/" : window.location.pathname.replace(/\/$/, "");
+  const carDetailId = currentPath.startsWith("/cars/") ? currentPath.replace("/cars/", "").split("/")[0] : "";
   const isHomePage = currentPath === "";
   const isCarsPage = currentPath === "/cars";
+  const isCarDetailPage = Boolean(carDetailId);
   const isConciergePage = currentPath === "/concierge";
   const isTermsPage = currentPath === "/terms";
   const isContactPage = currentPath === "/contact";
@@ -1491,6 +1725,8 @@ function App() {
 
       {isCarsPage ? (
         <CarsPage />
+      ) : isCarDetailPage ? (
+        <CarDetailPage vehicleId={carDetailId} />
       ) : isConciergePage ? (
         <ConciergePage />
       ) : isTermsPage ? (
